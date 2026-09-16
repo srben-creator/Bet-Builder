@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/BetBuilder.Api/BetBuilder.Api.csproj" />
+    <Project Path="src/BetBuilder.Application/BetBuilder.Application.csproj" />
+    <Project Path="src/BetBuilder.Domain/BetBuilder.Domain.csproj" />
+    <Project Path="src/BetBuilder.Infrastructure/BetBuilder.Infrastructure.csproj" />
+    <Project Path="src/BetBuilder.MathEngine/BetBuilder.MathEngine.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/BetBuilder.Application.Tests/BetBuilder.Application.Tests.csproj" />
+    <Project Path="tests/BetBuilder.MathEngine.Tests/BetBuilder.MathEngine.Tests.csproj" />
+  </Folder>
+</Solution>

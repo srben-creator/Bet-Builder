@@ -140,6 +140,7 @@ CREATE TABLE IF NOT EXISTS value_bets (
     selection           TEXT NOT NULL,
     model_prob          NUMERIC(6,4) NOT NULL,
     odds_price          NUMERIC(8,3) NOT NULL,
+    pinnacle_price      NUMERIC(8,3),
     implied_prob        NUMERIC(6,4) NOT NULL,
     edge_pct            NUMERIC(6,2) NOT NULL,
     ev_pct              NUMERIC(8,2) NOT NULL,

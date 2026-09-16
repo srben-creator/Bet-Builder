@@ -1,0 +1,6 @@
+@BetBuilder.Api_HostAddress = http://localhost:5118
+
+GET {{BetBuilder.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

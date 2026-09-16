@@ -1,1 +1,1 @@
-ALTER TABLE value_bets ADD COLUMN pinnacle_price NUMERIC(8,3);
+ALTER TABLE value_bets ADD COLUMN IF NOT EXISTS pinnacle_price NUMERIC(8,3);

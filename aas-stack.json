@@ -1,0 +1,11 @@
+﻿{
+  "name": "csharp-vue-web-stack",
+  "version": "1.0.0",
+  "description": "Stack de desenvolvimento web enterprise: ASP.NET Core 8/9 + Vue 3 TypeScript",
+  "skills": [
+    "dotnet-backend", "dotnet-backend-patterns", "dotnet-architect", "csharp-pro",
+    "cqrs-implementation", "markstream-vue", "vitest-skill", "tailwind-patterns",
+    "frontend-design", "frontend-mobile-security-xss-scan", "api-patterns",
+    "auth-implementation-patterns", "database-design", "playwright-skill", "brainstorming"
+  ]
+}
