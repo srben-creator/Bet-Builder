@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { ApiService } from '../api/client'
 import type { PerformanceDashboardDto } from '../api/types'
 import MetricCard from '../components/ui/MetricCard.vue'
@@ -28,6 +29,7 @@ ChartJS.register(
   Filler
 )
 
+const { t } = useI18n()
 const dashboard = ref<PerformanceDashboardDto | null>(null)
 const loading = ref(true)
 
@@ -52,7 +54,7 @@ const chartData = computed(() => {
     labels,
     datasets: [
       {
-        label: 'P&L Acumulado (Unidades)',
+        label: t('performance.chartLabel'),
         data,
         borderColor: '#10b981',
         backgroundColor: 'rgba(16, 185, 129, 0.1)',
@@ -108,36 +110,36 @@ const chartOptions = {
     <div>
       <h2 class="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
         <span>📈</span>
-        <span>Performance & Evolução de Banca</span>
+        <span>{{ t('performance.title') }}</span>
       </h2>
       <p class="text-sm text-slate-400 mt-1">
-        Acompanhe o desempenho no mundo real da estratégia de apostas com valor esperado positivo (+EV).
+        {{ t('performance.subtitle') }}
       </p>
     </div>
 
     <!-- KPI Metric Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <MetricCard
-        title="Apostas Liquidadas"
+        :title="t('performance.settledBets')"
         :value="dashboard?.totalSettledBets || 0"
-        subtitle="Total de apostas finalizadas"
+        :subtitle="t('performance.settledBetsDesc')"
       />
       <MetricCard
-        title="Taxa de Acerto"
+        :title="t('performance.winRate')"
         :value="`${dashboard?.winRate.toFixed(1) || '0.0'}%`"
-        subtitle="Win Rate global"
+        :subtitle="t('performance.winRateDesc')"
         :trend="(dashboard?.winRate || 0) >= 50 ? 'up' : 'down'"
       />
       <MetricCard
-        title="P&L Total (Unidades)"
+        :title="t('performance.pnlTotal')"
         :value="`${(dashboard?.totalProfit || 0) >= 0 ? '+' : ''}${dashboard?.totalProfit.toFixed(2) || '0.00'}`"
-        subtitle="Lucro acumulado em unidades"
+        :subtitle="t('performance.pnlTotalDesc')"
         :trend="(dashboard?.totalProfit || 0) >= 0 ? 'up' : 'down'"
       />
       <MetricCard
-        title="ROI Geral"
+        :title="t('performance.roi')"
         :value="`${(dashboard?.roi || 0) >= 0 ? '+' : ''}${dashboard?.roi.toFixed(1) || '0.0'}%`"
-        subtitle="Retorno sobre investimento"
+        :subtitle="t('performance.roiDesc')"
         :trend="(dashboard?.roi || 0) >= 0 ? 'up' : 'down'"
       />
     </div>
@@ -146,8 +148,8 @@ const chartOptions = {
     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
       <div class="flex items-center justify-between">
         <div>
-          <h3 class="font-bold text-slate-100 text-base">Evolução do Saldo (Curva P&L)</h3>
-          <p class="text-xs text-slate-500">Unidades de lucro acumuladas ao longo do tempo</p>
+          <h3 class="font-bold text-slate-100 text-base">{{ t('performance.chartTitle') }}</h3>
+          <p class="text-xs text-slate-500">{{ t('performance.chartSubtitle') }}</p>
         </div>
       </div>
 
@@ -155,7 +157,7 @@ const chartOptions = {
         <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-400"></div>
       </div>
       <div v-else-if="!dashboard || dashboard.bankrollEvolution.length === 0" class="h-64 flex items-center justify-center text-slate-500 text-sm">
-        Nenhum dado de P&L registrado até o momento.
+        {{ t('performance.noChartData') }}
       </div>
       <div v-else class="h-72">
         <Line :data="chartData" :options="chartOptions" />
@@ -164,23 +166,23 @@ const chartOptions = {
 
     <!-- Settled Bets History Table -->
     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
-      <h3 class="font-bold text-slate-100 text-base">Histórico de Apostas Finalizadas</h3>
+      <h3 class="font-bold text-slate-100 text-base">{{ t('performance.historyTitle') }}</h3>
 
       <div v-if="!dashboard || dashboard.history.length === 0" class="py-8 text-center text-slate-500 text-sm">
-        Nenhuma aposta liquidada ainda.
+        {{ t('performance.noHistory') }}
       </div>
 
       <div v-else class="overflow-x-auto">
         <table class="w-full text-left text-sm">
           <thead class="bg-slate-950 text-slate-400 text-xs uppercase font-semibold border-b border-slate-800">
             <tr>
-              <th class="py-3 px-4">Data / Hora</th>
-              <th class="py-3 px-4">Mercado</th>
-              <th class="py-3 px-4">Seleção</th>
-              <th class="py-3 px-4 text-center">Resultado</th>
-              <th class="py-3 px-4 text-right">Cotação</th>
-              <th class="py-3 px-4 text-right">Stake</th>
-              <th class="py-3 px-4 text-right">P&L</th>
+              <th class="py-3 px-4">{{ t('performance.table.dateTime') }}</th>
+              <th class="py-3 px-4">{{ t('performance.table.market') }}</th>
+              <th class="py-3 px-4">{{ t('performance.table.selection') }}</th>
+              <th class="py-3 px-4 text-center">{{ t('performance.table.result') }}</th>
+              <th class="py-3 px-4 text-right">{{ t('performance.table.odds') }}</th>
+              <th class="py-3 px-4 text-right">{{ t('performance.table.stake') }}</th>
+              <th class="py-3 px-4 text-right">{{ t('performance.table.pnl') }}</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-800/60 font-tabular">

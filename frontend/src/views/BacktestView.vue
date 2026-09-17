@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { ApiService } from '../api/client'
 import type { BacktestReportDto } from '../api/types'
 import MetricCard from '../components/ui/MetricCard.vue'
@@ -27,6 +28,7 @@ ChartJS.register(
   Filler
 )
 
+const { t } = useI18n()
 const report = ref<BacktestReportDto | null>(null)
 const loading = ref(true)
 
@@ -51,7 +53,7 @@ const chartData = computed(() => {
     labels,
     datasets: [
       {
-        label: 'P&L Simulado (Unidades)',
+        label: t('backtest.chartLabel'),
         data,
         borderColor: '#38bdf8',
         backgroundColor: 'rgba(56, 189, 248, 0.1)',
@@ -96,50 +98,50 @@ const chartOptions = {
     <div>
       <h2 class="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
         <span>🔬</span>
-        <span>Relatório de Backtest & Closing Line Value (CLV)</span>
+        <span>{{ t('backtest.title') }}</span>
       </h2>
       <p class="text-sm text-slate-400 mt-1">
-        Avaliação retrospectiva do modelo Dixon-Coles simulando temporadas anteriores sem vazamento de dados futuros.
+        {{ t('backtest.subtitle') }}
       </p>
     </div>
 
     <!-- Top Metric Cards -->
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
       <MetricCard
-        title="Apostas Simuladas"
+        :title="t('backtest.simulatedBets')"
         :value="report?.totalSimulatedBets || 0"
       />
       <MetricCard
-        title="Taxa de Acerto"
+        :title="t('backtest.winRate')"
         :value="`${report?.winRate.toFixed(1) || '0.0'}%`"
       />
       <MetricCard
-        title="ROI Geral"
+        :title="t('backtest.roi')"
         :value="`${(report?.overallRoi || 0) >= 0 ? '+' : ''}${report?.overallRoi.toFixed(2) || '0.00'}%`"
         :trend="(report?.overallRoi || 0) >= 0 ? 'up' : 'down'"
       />
       <MetricCard
-        title="Superou Fechamento"
+        :title="t('backtest.beatClosing')"
         :value="`${report?.beatClosingRate.toFixed(1) || '0.0'}%`"
-        subtitle="Beat Closing Line Rate"
+        :subtitle="t('backtest.beatClosingDesc')"
         trend="up"
       />
       <MetricCard
-        title="Edge Médio CLV"
+        :title="t('backtest.avgClvEdge')"
         :value="`${(report?.avgClvEdge || 0) >= 0 ? '+' : ''}${report?.avgClvEdge.toFixed(2) || '0.00'}%`"
-        subtitle="Vantagem média sobre Pinnacle"
+        :subtitle="t('backtest.avgClvEdgeDesc')"
       />
     </div>
 
     <!-- Chart: Cumulative Backtest Curve -->
     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
-      <h3 class="font-bold text-slate-100 text-base">Curva de P&L Simulado (Walk-Forward)</h3>
+      <h3 class="font-bold text-slate-100 text-base">{{ t('backtest.chartTitle') }}</h3>
 
       <div v-if="loading" class="h-64 flex items-center justify-center text-slate-400">
         <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-sky-400"></div>
       </div>
       <div v-else-if="!report || report.cumulativePnlEvolution.length === 0" class="h-64 flex items-center justify-center text-slate-500 text-sm">
-        Nenhum dado de backtest encontrado no banco de dados.
+        {{ t('backtest.noChartData') }}
       </div>
       <div v-else class="h-72">
         <Line :data="chartData" :options="chartOptions" />
@@ -148,22 +150,22 @@ const chartOptions = {
 
     <!-- Performance by Market Table -->
     <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
-      <h3 class="font-bold text-slate-100 text-base">Performance por Mercado</h3>
+      <h3 class="font-bold text-slate-100 text-base">{{ t('backtest.marketTitle') }}</h3>
 
       <div v-if="!report || report.marketStats.length === 0" class="py-8 text-center text-slate-500 text-sm">
-        Nenhum registro por mercado disponível.
+        {{ t('backtest.noMarketData') }}
       </div>
 
       <div v-else class="overflow-x-auto">
         <table class="w-full text-left text-sm">
           <thead class="bg-slate-950 text-slate-400 text-xs uppercase font-semibold border-b border-slate-800">
             <tr>
-              <th class="py-3 px-4">Mercado</th>
-              <th class="py-3 px-4 text-right">Apostas</th>
-              <th class="py-3 px-4 text-right">Taxa de Acerto</th>
-              <th class="py-3 px-4 text-right">Total Apostado</th>
-              <th class="py-3 px-4 text-right">Lucro (P&L)</th>
-              <th class="py-3 px-4 text-right font-bold text-emerald-400">ROI (%)</th>
+              <th class="py-3 px-4">{{ t('backtest.table.market') }}</th>
+              <th class="py-3 px-4 text-right">{{ t('backtest.table.bets') }}</th>
+              <th class="py-3 px-4 text-right">{{ t('backtest.table.winRate') }}</th>
+              <th class="py-3 px-4 text-right">{{ t('backtest.table.totalStaked') }}</th>
+              <th class="py-3 px-4 text-right">{{ t('backtest.table.profit') }}</th>
+              <th class="py-3 px-4 text-right font-bold text-emerald-400">{{ t('backtest.table.roi') }}</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-800/60 font-tabular">

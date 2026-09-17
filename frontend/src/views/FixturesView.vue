@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { ApiService } from '../api/client'
 import type { FixtureDto } from '../api/types'
 import Badge from '../components/ui/Badge.vue'
 import { Calendar, Clock, Trophy } from 'lucide-vue-next'
 
+const { t } = useI18n()
 const fixtures = ref<FixtureDto[]>([])
 const loading = ref(true)
 
@@ -37,27 +39,27 @@ const groupedFixtures = computed(() => {
       <div>
         <h2 class="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
           <span>📅</span>
-          <span>Jogos Agendados</span>
+          <span>{{ t('fixtures.title') }}</span>
         </h2>
         <p class="text-sm text-slate-400 mt-1">
-          Calendário completo de partidas futuras monitoradas pelo sistema nas principais ligas europeias.
+          {{ t('fixtures.subtitle') }}
         </p>
       </div>
 
-      <Badge variant="blue">{{ fixtures.length }} jogos agendados</Badge>
+      <Badge variant="blue">{{ fixtures.length }} {{ t('fixtures.scheduled') }}</Badge>
     </div>
 
     <!-- Loading Skeleton -->
     <div v-if="loading" class="py-16 text-center text-slate-400">
       <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-400 mb-3"></div>
-      <p class="text-sm">Carregando calendário de partidas...</p>
+      <p class="text-sm">{{ t('fixtures.loading') }}</p>
     </div>
 
     <!-- Empty State -->
     <div v-else-if="fixtures.length === 0" class="bg-slate-900 border border-slate-800 rounded-2xl p-12 text-center text-slate-400">
       <Calendar class="w-10 h-10 mx-auto text-slate-600 mb-3" />
-      <h3 class="text-lg font-bold text-slate-200">Nenhum jogo agendado encontrado</h3>
-      <p class="text-sm text-slate-500 mt-1">Clique em "Sync Odds" no cabeçalho para carregar as próximas rodadas.</p>
+      <h3 class="text-lg font-bold text-slate-200">{{ t('fixtures.noFixtures') }}</h3>
+      <p class="text-sm text-slate-500 mt-1">{{ t('fixtures.noFixturesTip') }}</p>
     </div>
 
     <!-- Grouped Match Cards -->
@@ -67,7 +69,7 @@ const groupedFixtures = computed(() => {
         <div class="flex items-center gap-2 text-sm font-bold text-emerald-400 pb-1 border-b border-slate-800">
           <Calendar class="w-4 h-4" />
           <span>{{ dateKey }}</span>
-          <span class="text-xs font-normal text-slate-500">({{ matchList.length }} jogos)</span>
+          <span class="text-xs font-normal text-slate-500">({{ matchList.length }} {{ t('fixtures.games') }})</span>
         </div>
 
         <!-- Matches Grid -->
@@ -83,14 +85,14 @@ const groupedFixtures = computed(() => {
                 <span class="text-xs text-slate-400">{{ fix.league }}</span>
               </div>
               <div class="font-bold text-slate-100 text-sm">
-                {{ fix.homeTeam }} <span class="text-slate-500 font-normal">vs</span> {{ fix.awayTeam }}
+                {{ fix.homeTeam }} <span class="text-slate-500 font-normal">{{ t('fixtures.vs') }}</span> {{ fix.awayTeam }}
               </div>
             </div>
 
             <div class="text-right space-y-1">
               <div class="flex items-center gap-1 text-xs text-slate-400 justify-end">
                 <Clock class="w-3 h-3 text-slate-500" />
-                <span class="font-tabular font-medium">{{ fix.time }} UTC</span>
+                <span class="font-tabular font-medium">{{ fix.time }} {{ t('fixtures.utc') }}</span>
               </div>
               <Badge variant="slate">{{ fix.status }}</Badge>
             </div>

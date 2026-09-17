@@ -82,57 +82,92 @@
     "added": "Adicionado"
   },
   "slipDrawer": {
-    "title": "Boletim (Step {step})",
-    "clear": "Limpar",
-    "combinedOdds": "Odd Combinada:",
-    "suggestedStake": "Stake Sugerida:",
-    "placeBet": "Registrar na Ladder",
-    "empty": "Nenhuma perna selecionada",
-    "emptyTip": "Adicione seleções da lista de pernas seguras para começar."
+    "title": "Bilhete / Slip",
+    "clear": "Limpar tudo",
+    "empty": "Seu bilhete esta vazio.",
+    "emptyTip": "Clique em Adicionar nas selecoes seguras para compor sua aposta.",
+    "correlationAlert": "Mesmo jogo detectado!",
+    "correlationDesc": "Eventos do mesmo jogo possuem correlacao matematica. A probabilidade combinada e uma estimativa.",
+    "probOf": "de probabilidade",
+    "combinedProb": "Probabilidade Combinada:",
+    "fairOdds": "Odd Justa (Sem Margem):",
+    "bookmakerOdds": "Cotacao da Casa (Odd Acumulada):",
+    "evPositive": "✅ Aposta com +EV! Vantagem: {edge}%",
+    "evNegative": "❌ Aposta com -EV. Perda esperada: {edge}%",
+    "loseStep": "Registrar derrota",
+    "winStep": "Vencer Passo 🎉"
   },
   "fixtures": {
-    "title": "Jogos Agendados & Resumo de Formato",
-    "subtitle": "Partidas das próximas semanas com xG esperado e previsões do modelo Dixon-Coles pre-match.",
-    "loading": "Carregando partidas...",
-    "noFixtures": "Nenhum jogo agendado para o período atual.",
-    "table": {
-      "date": "Data",
-      "league": "Liga",
-      "home": "Casa",
-      "away": "Fora",
-      "homeWin": "Vitória Casa",
-      "draw": "Empate",
-      "awayWin": "Vitória Fora",
-      "expectedGoals": "xG Esperado (Casa vs Fora)"
-    }
+    "title": "Jogos Agendados",
+    "subtitle": "Calendário completo de partidas futuras monitoradas pelo sistema nas principais ligas europeias.",
+    "scheduled": "jogos agendados",
+    "loading": "Carregando calendário de partidas...",
+    "noFixtures": "Nenhum jogo agendado encontrado",
+    "noFixturesTip": "Clique em Sync Odds no cabeçalho para carregar as próximas rodadas.",
+    "games": "jogos",
+    "vs": "vs",
+    "utc": "UTC"
   },
   "performance": {
-    "title": "Análise de Performance & P&L",
-    "subtitle": "Estatísticas agregadas, curva de capital (Bankroll) e quebra de lucros por ligas e mercados.",
-    "metrics": {
-      "roi": "ROI Total",
-      "profit": "Lucro Líquido",
-      "winRate": "Taxa de Acerto (Win Rate)",
-      "totalBets": "Total Apostas (Resolvidas)"
+    "title": "Performance & Evolução de Banca",
+    "subtitle": "Acompanhe o desempenho no mundo real da estratégia de apostas com valor esperado positivo (+EV).",
+    "settledBets": "Apostas Liquidadas",
+    "settledBetsDesc": "Total de apostas finalizadas",
+    "winRate": "Taxa de Acerto",
+    "winRateDesc": "Win Rate global",
+    "pnlTotal": "P&L Total (Unidades)",
+    "pnlTotalDesc": "Lucro acumulado em unidades",
+    "roi": "ROI Geral",
+    "roiDesc": "Retorno sobre investimento",
+    "chartTitle": "Evolução do Saldo (Curva P&L)",
+    "chartSubtitle": "Unidades de lucro acumuladas ao longo do tempo",
+    "noChartData": "Nenhum dado de P&L registrado até o momento.",
+    "historyTitle": "Histórico de Apostas Finalizadas",
+    "noHistory": "Nenhuma aposta liquidada ainda.",
+    "table": {
+      "dateTime": "Data / Hora",
+      "market": "Mercado",
+      "selection": "Seleção",
+      "result": "Resultado",
+      "odds": "Cotação",
+      "stake": "Stake",
+      "pnl": "P&L"
     },
-    "charts": {
-      "cumulative": "Curva de Capital (Cumulative P&L)",
-      "byLeague": "Lucro por Liga"
-    },
-    "loading": "Carregando métricas de performance..."
+    "chartLabel": "P&L Acumulado (Unidades)"
   },
   "backtest": {
-    "title": "Closing Line Value (CLV) & Backtest",
-    "subtitle": "Analise a precisão das apostas vs. cotações de fechamento (Closing Line). Bater a CLV é o único indicador preditivo real a longo prazo.",
-    "metrics": {
-      "avgClv": "CLV Médio",
-      "beatClvRate": "Taxa Beating CLV",
-      "expectedYield": "Yield Esperado"
+    "title": "Relatório de Backtest & Closing Line Value (CLV)",
+    "subtitle": "Avaliação retrospectiva do modelo Dixon-Coles simulando temporadas anteriores sem vazamento de dados futuros.",
+    "simulatedBets": "Apostas Simuladas",
+    "winRate": "Taxa de Acerto",
+    "roi": "ROI Geral",
+    "beatClosing": "Superou Fechamento",
+    "beatClosingDesc": "Beat Closing Line Rate",
+    "avgClvEdge": "Edge Médio CLV",
+    "avgClvEdgeDesc": "Vantagem média sobre Pinnacle",
+    "chartTitle": "Curva de P&L Simulado (Walk-Forward)",
+    "noChartData": "Nenhum dado de backtest encontrado no banco de dados.",
+    "marketTitle": "Performance por Mercado",
+    "noMarketData": "Nenhum registro por mercado disponível.",
+    "table": {
+      "market": "Mercado",
+      "bets": "Apostas",
+      "winRate": "Taxa de Acerto",
+      "totalStaked": "Total Apostado",
+      "profit": "Lucro (P&L)",
+      "roi": "ROI (%)"
     },
-    "loading": "Processando histórico de CLV...",
-    "charts": {
-      "clvProgression": "CLV Médio vs Yield Real",
-      "scatter": "Dispersão de Odds de Fechamento"
+    "chartLabel": "P&L Simulado (Unidades)"
+  },
+  "settings": {
+    "title": "Configurações",
+    "language": "Idioma",
+    "theme": "Tema Visual",
+    "themes": {
+      "dark": "Dark (Padrão)",
+      "light": "Light (Claro)",
+      "midnight": "Midnight (Noturno)",
+      "dracula": "Dracula"
     }
   }
 }

@@ -59,88 +59,115 @@
     }
   },
   "ladder": {
-    "title": "Honest Ladder",
-    "subtitle": "Transparent and immutable tracking of your registered bets. No deletions, no post-factum edits.",
-    "totalBets": "Total Bets",
-    "pending": "Pending",
-    "winRate": "Win Rate",
-    "loading": "Loading ladder bets...",
-    "noBets": "No bets registered in the ladder.",
-    "noBetsTip": "Go to the Value Bets page to find and register bets.",
-    "table": {
-      "date": "Date",
-      "match": "Match",
-      "selection": "Selection / Market",
-      "odd": "Odd",
-      "stake": "Stake",
-      "status": "Status",
-      "pnl": "P&L",
-      "settledAt": "Settled At"
-    },
-    "status": {
-      "pending": "Pending",
-      "won": "Won",
-      "lost": "Lost",
-      "void": "Void"
-    }
-  },
-  "fixtures": {
-    "title": "Scheduled Matches & Form Overview",
-    "subtitle": "Upcoming matches with expected xG and Dixon-Coles pre-match predictions.",
-    "loading": "Loading fixtures...",
-    "noFixtures": "No matches scheduled for the current period.",
-    "table": {
-      "date": "Date",
-      "league": "League",
-      "home": "Home",
-      "away": "Away",
-      "homeWin": "Home Win",
-      "draw": "Draw",
-      "awayWin": "Away Win",
-      "expectedGoals": "Expected xG (Home vs Away)"
-    }
-  },
-  "performance": {
-    "title": "Performance & P&L Analysis",
-    "subtitle": "Aggregate stats, bankroll curve, and profit breakdown by leagues and markets.",
-    "metrics": {
-      "roi": "Total ROI",
-      "profit": "Net Profit",
-      "winRate": "Win Rate",
-      "totalBets": "Total Bets (Settled)"
-    },
-    "charts": {
-      "cumulative": "Bankroll Curve (Cumulative P&L)",
-      "byLeague": "Profit by League"
-    },
-    "loading": "Loading performance metrics..."
-  },
-  "backtest": {
-    "title": "Closing Line Value (CLV) & Backtest",
-    "subtitle": "Analyze bet accuracy vs. closing line odds. Beating CLV is the only real predictive indicator in the long term.",
-    "metrics": {
-      "avgClv": "Avg CLV",
-      "beatClvRate": "Beat CLV Rate",
-      "expectedYield": "Expected Yield"
-    },
-    "loading": "Processing CLV history...",
-    "charts": {
-      "clvProgression": "Avg CLV vs Actual Yield",
-      "scatter": "Closing Odds Scatter"
-    }
+    "title": "The Honest Ladder Challenge",
+    "subtitle": "Compounding bankroll strategy using high probability selections with correlation protection.",
+    "currentBankroll": "Current Bankroll",
+    "currentBankrollDesc": "Accumulated compound balance",
+    "targetAmount": "Target Amount",
+    "targetAmountDesc": "Challenge objective",
+    "currentStep": "Current Step",
+    "currentStepDesc": "Ongoing stage",
+    "step": "Step",
+    "bankAction": "Bankroll Action",
+    "reset": "Reset Ladder",
+    "resetDesc": "Returns to Step 1 with €5.00",
+    "safeLegs": "Safe Selections (>75% Prob)",
+    "dateFilter": "Date:",
+    "allDates": "All",
+    "loading": "Loading safe legs...",
+    "noLegs": "No high probability selections available right now.",
+    "noLegsTip": "Run odds sync using the \"Sync Odds\" button in the header.",
+    "prob": "prob",
+    "add": "Add",
+    "added": "Added"
   },
   "slipDrawer": {
-    "title": "Confirm Bet",
-    "description": "Review the Edge and adjust the suggested Stake before registering.",
-    "match": "Match",
-    "market": "Market",
-    "selection": "Selection",
-    "odds": "Offered Odds",
-    "trueOdds": "True Odds",
-    "edge": "Edge (+EV)",
-    "bookmaker": "Bookmaker",
-    "stake": "Stake Amount (€)",
-    "cancel": "Cancel",
-    "confirm": "Register on Ladder"
+    "title": "Bet Slip",
+    "clear": "Clear all",
+    "empty": "Your slip is empty.",
+    "emptyTip": "Click Add on safe selections to build your bet.",
+    "correlationAlert": "Same match detected!",
+    "correlationDesc": "Events from the same match have mathematical correlation. Combined probability is an estimate.",
+    "probOf": "probability",
+    "combinedProb": "Combined Probability:",
+    "fairOdds": "Fair Odds (No Margin):",
+    "bookmakerOdds": "Bookmaker Odds (Accumulator):",
+    "evPositive": "✅ +EV Bet! Edge: {edge}%",
+    "evNegative": "❌ -EV Bet. Expected loss: {edge}%",
+    "loseStep": "Register loss",
+    "winStep": "Win Step 🎉"
+  },
+  "fixtures": {
+    "title": "Scheduled Matches",
+    "subtitle": "Complete calendar of future matches monitored by the system in major European leagues.",
+    "scheduled": "scheduled matches",
+    "loading": "Loading match calendar...",
+    "noFixtures": "No scheduled matches found",
+    "noFixturesTip": "Click Sync Odds in the header to load upcoming rounds.",
+    "games": "matches",
+    "vs": "vs",
+    "utc": "UTC"
+  },
+  "performance": {
+    "title": "Performance & Bankroll Evolution",
+    "subtitle": "Track real-world performance of the +EV expected value betting strategy.",
+    "settledBets": "Settled Bets",
+    "settledBetsDesc": "Total finalized bets",
+    "winRate": "Hit Rate",
+    "winRateDesc": "Global Win Rate",
+    "pnlTotal": "Total P&L (Units)",
+    "pnlTotalDesc": "Accumulated profit in units",
+    "roi": "Overall ROI",
+    "roiDesc": "Return on Investment",
+    "chartTitle": "Bankroll Evolution (P&L Curve)",
+    "chartSubtitle": "Accumulated profit units over time",
+    "noChartData": "No P&L data recorded so far.",
+    "historyTitle": "Settled Bets History",
+    "noHistory": "No settled bets yet.",
+    "table": {
+      "dateTime": "Date / Time",
+      "market": "Market",
+      "selection": "Selection",
+      "result": "Result",
+      "odds": "Odds",
+      "stake": "Stake",
+      "pnl": "P&L"
+    },
+    "chartLabel": "Accumulated P&L (Units)"
+  },
+  "backtest": {
+    "title": "Backtest Report & Closing Line Value (CLV)",
+    "subtitle": "Retrospective evaluation of the Dixon-Coles model simulating previous seasons without future data leakage.",
+    "simulatedBets": "Simulated Bets",
+    "winRate": "Hit Rate",
+    "roi": "Overall ROI",
+    "beatClosing": "Beat Closing",
+    "beatClosingDesc": "Beat Closing Line Rate",
+    "avgClvEdge": "Avg CLV Edge",
+    "avgClvEdgeDesc": "Average advantage over Pinnacle",
+    "chartTitle": "Simulated P&L Curve (Walk-Forward)",
+    "noChartData": "No backtest data found in the database.",
+    "marketTitle": "Performance by Market",
+    "noMarketData": "No market records available.",
+    "table": {
+      "market": "Market",
+      "bets": "Bets",
+      "winRate": "Hit Rate",
+      "totalStaked": "Total Staked",
+      "profit": "Profit (P&L)",
+      "roi": "ROI (%)"
+    },
+    "chartLabel": "Simulated P&L (Units)"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "theme": "Visual Theme",
+    "themes": {
+      "dark": "Dark (Default)",
+      "light": "Light",
+      "midnight": "Midnight",
+      "dracula": "Dracula"
+    }
   }
 }

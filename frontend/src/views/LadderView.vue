@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useLadderStore } from '../stores/useLadderStore'
 import MetricCard from '../components/ui/MetricCard.vue'
 import SlipDrawer from '../components/ladder/SlipDrawer.vue'
 import Badge from '../components/ui/Badge.vue'
 import { Plus, RotateCcw, ShieldCheck } from 'lucide-vue-next'
 
+const { t } = useI18n()
 const ladderStore = useLadderStore()
-const selectedDate = ref('Todas')
+const selectedDate = ref('Todas') // Will use key for "Todas" later, just keep as logic value
 
 onMounted(() => {
   ladderStore.loadChallenge()
@@ -35,10 +37,10 @@ function isAlreadyInSlip(leg: any) {
       <div>
         <h2 class="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
           <span>🪜</span>
-          <span>The Honest Ladder Challenge</span>
+          <span>{{ t('ladder.title') }}</span>
         </h2>
         <p class="text-sm text-slate-400 mt-1">
-          Estratégia de crescimento composto de banca através de seleções de altíssima probabilidade com proteção contra correlação.
+          {{ t('ladder.subtitle') }}
         </p>
       </div>
     </div>
@@ -46,33 +48,33 @@ function isAlreadyInSlip(leg: any) {
     <!-- Top Survival Dashboard -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <MetricCard
-        title="Banca Atual"
+        :title="t('ladder.currentBankroll')"
         :value="`€${ladderStore.challenge?.currentBankroll.toFixed(2) || '5.00'}`"
-        subtitle="Saldo composto acumulado"
+        :subtitle="t('ladder.currentBankrollDesc')"
         trend="up"
       />
       <MetricCard
-        title="Meta Final"
+        :title="t('ladder.targetAmount')"
         :value="`€${ladderStore.challenge?.targetAmount.toFixed(2) || '50.00'}`"
-        subtitle="Objetivo do desafio"
+        :subtitle="t('ladder.targetAmountDesc')"
       />
       <MetricCard
-        title="Passo Atual"
-        :value="`Passo ${ladderStore.challenge?.currentStep || 1}`"
-        subtitle="Etapa em andamento"
+        :title="t('ladder.currentStep')"
+        :value="`${t('ladder.step')} ${ladderStore.challenge?.currentStep || 1}`"
+        :subtitle="t('ladder.currentStepDesc')"
       />
 
       <!-- Reset Action Card -->
       <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg flex flex-col justify-between">
-        <div class="text-xs font-medium uppercase tracking-wider text-slate-400 mb-1">Ação de Banca</div>
+        <div class="text-xs font-medium uppercase tracking-wider text-slate-400 mb-1">{{ t('ladder.bankAction') }}</div>
         <button
           @click="ladderStore.resetChallenge"
           class="w-full py-2.5 px-4 bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-semibold rounded-lg border border-slate-700 flex items-center justify-center gap-2 transition-all cursor-pointer"
         >
           <RotateCcw class="w-4 h-4 text-amber-400" />
-          <span>Reiniciar Ladder</span>
+          <span>{{ t('ladder.reset') }}</span>
         </button>
-        <div class="text-xs text-slate-500 mt-2">Volta ao Passo 1 com €5.00</div>
+        <div class="text-xs text-slate-500 mt-2">{{ t('ladder.resetDesc') }}</div>
       </div>
     </div>
 
@@ -83,29 +85,29 @@ function isAlreadyInSlip(leg: any) {
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
             <ShieldCheck class="w-5 h-5 text-emerald-400" />
-            <h3 class="font-bold text-slate-100 text-lg">Seleções Seguras (>75% Prob)</h3>
+            <h3 class="font-bold text-slate-100 text-lg">{{ t('ladder.safeLegs') }}</h3>
           </div>
 
           <!-- Date Filter -->
           <div class="flex items-center gap-2">
-            <span class="text-xs text-slate-400">Data:</span>
+            <span class="text-xs text-slate-400">{{ t('ladder.dateFilter') }}</span>
             <select
               v-model="selectedDate"
               class="bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-xs text-slate-200 focus:outline-none"
             >
-              <option v-for="d in availableDates" :key="d" :value="d">{{ d }}</option>
+              <option v-for="d in availableDates" :key="d" :value="d">{{ d === 'Todas' ? t('ladder.allDates') : d }}</option>
             </select>
           </div>
         </div>
 
         <div v-if="ladderStore.loading" class="py-12 text-center text-slate-400">
           <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-400 mb-3"></div>
-          <p class="text-sm">Carregando pernas seguras...</p>
+          <p class="text-sm">{{ t('ladder.loading') }}</p>
         </div>
 
         <div v-else-if="filteredLegs.length === 0" class="bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center text-slate-400">
-          <p class="text-sm">Nenhuma seleção de alta probabilidade disponível no momento.</p>
-          <p class="text-xs text-slate-500 mt-1">Execute o sincronismo de odds pelo botão "Sync Odds" no cabeçalho.</p>
+          <p class="text-sm">{{ t('ladder.noLegs') }}</p>
+          <p class="text-xs text-slate-500 mt-1">{{ t('ladder.noLegsTip') }}</p>
         </div>
 
         <div v-else class="space-y-2.5">
@@ -119,7 +121,7 @@ function isAlreadyInSlip(leg: any) {
               <div class="font-semibold text-slate-100 text-sm">{{ leg.match }}</div>
               <div class="flex items-center gap-2">
                 <Badge variant="blue">{{ leg.market }}</Badge>
-                <span class="text-xs font-bold text-emerald-400 font-tabular">🎯 {{ (leg.prob * 100).toFixed(1) }}% prob</span>
+                <span class="text-xs font-bold text-emerald-400 font-tabular">🎯 {{ (leg.prob * 100).toFixed(1) }}% {{ t('ladder.prob') }}</span>
               </div>
             </div>
 
@@ -130,7 +132,7 @@ function isAlreadyInSlip(leg: any) {
               :class="isAlreadyInSlip(leg) ? 'bg-slate-800 text-slate-500 cursor-not-allowed' : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow'"
             >
               <Plus class="w-3.5 h-3.5" />
-              <span>{{ isAlreadyInSlip(leg) ? 'Adicionado' : 'Adicionar' }}</span>
+              <span>{{ isAlreadyInSlip(leg) ? t('ladder.added') : t('ladder.add') }}</span>
             </button>
           </div>
         </div>
