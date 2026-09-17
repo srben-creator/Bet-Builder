@@ -381,7 +381,7 @@ public class DataSyncService : IDataSyncService
                             var bkCode = bk.GetProperty("key").GetString() ?? "";
                             var bkTitle = bk.GetProperty("title").GetString() ?? bkCode;
 
-                            var bookie = bookmakers.FirstOrDefault(b => b.Code.Equals(bkCode, StringComparison.OrdinalIgnoreCase));
+                            var bookie = bookmakers.FirstOrDefault(b => b.Code.Equals(bkCode, StringComparison.OrdinalIgnoreCase) || b.Name.Equals(bkTitle, StringComparison.OrdinalIgnoreCase));
                             if (bookie == null)
                             {
                                 bookie = new Bookmaker { Name = bkTitle, Code = bkCode, IsSharp = bkCode.Equals("pinnacle", StringComparison.OrdinalIgnoreCase) };
@@ -468,6 +468,7 @@ public class DataSyncService : IDataSyncService
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error fetching live odds for {League}", league.Name);
+                _db.ChangeTracker.Clear();
             }
         }
 
