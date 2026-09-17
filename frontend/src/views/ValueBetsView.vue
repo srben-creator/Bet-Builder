@@ -142,7 +142,7 @@ const totalPages = computed(() => Math.ceil(filteredBets.value.length / itemsPer
 
     <!-- Data Table -->
     <div v-else class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl flex flex-col">
-      <div class="overflow-auto max-h-[600px] relative">
+      <div class="overflow-auto max-h-[calc(100vh-300px)] relative">
         <table class="w-full text-left text-sm relative">
           <thead class="sticky top-0 z-10 bg-slate-950 text-slate-400 text-xs uppercase font-semibold shadow-[0_1px_0_0_#1e293b]">
             <tr>
