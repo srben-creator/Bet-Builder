@@ -13,7 +13,8 @@ export default defineConfig({
     proxy: {
       '/api': {
         target: 'http://localhost:5000',
-        changeOrigin: true
+        changeOrigin: true,
+        ws: true
       },
       '/swagger': {
         target: 'http://localhost:5000',

@@ -82,7 +82,7 @@ app.UseDefaultFiles();
 app.UseStaticFiles();
 
 app.MapControllers();
-app.MapHub<BetBuilder.Api.Hubs.SyncHub>("/hubs/sync");
+app.MapHub<BetBuilder.Api.Hubs.SyncHub>("/api/hubs/sync");
 app.MapFallbackToFile("index.html");
 
 app.Run();
