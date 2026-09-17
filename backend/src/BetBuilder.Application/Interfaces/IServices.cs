@@ -5,6 +5,7 @@ namespace BetBuilder.Application.Interfaces;
 public interface IValueBetsService
 {
     Task<List<ValueBetDto>> GetValueBetsAsync(double minEdge = 2.0, Guid? leagueId = null, string? date = null, CancellationToken ct = default);
+    Task<List<LeagueDto>> GetActiveLeaguesAsync(CancellationToken ct = default);
 }
 
 public interface ILadderService
@@ -12,6 +13,7 @@ public interface ILadderService
     Task<LadderCurrentDto> GetCurrentChallengeAsync(CancellationToken ct = default);
     Task<List<LadderSafeLegDto>> GetSafeLegsAsync(CancellationToken ct = default);
     Task<LadderCurrentDto> WinStepAsync(decimal odds, CancellationToken ct = default);
+    Task<LadderCurrentDto> LoseStepAsync(CancellationToken ct = default);
     Task<LadderCurrentDto> ResetChallengeAsync(CancellationToken ct = default);
 }
 

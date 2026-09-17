@@ -19,7 +19,7 @@ public class PerformanceService : IPerformanceService
         var bets = await _db.ValueBets
             .AsNoTracking()
             .Where(b => b.Status == "won" || b.Status == "lost")
-            .OrderBy(b => b.CreatedAt)
+            .OrderBy(b => b.SettledAt ?? b.CreatedAt)
             .ToListAsync(ct);
 
         if (bets.Count == 0)

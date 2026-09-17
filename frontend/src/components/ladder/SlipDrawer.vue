@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useLadderStore } from '../../stores/useLadderStore'
 import Badge from '../ui/Badge.vue'
-import { AlertTriangle, Trash2, Trophy } from 'lucide-vue-next'
+import { AlertTriangle, Trash2, Trophy, XCircle } from 'lucide-vue-next'
 
 const ladderStore = useLadderStore()
 </script>
@@ -90,14 +90,24 @@ const ladderStore = useLadderStore()
         <span v-else>❌ Aposta com -EV. Perda esperada: {{ Math.abs(ladderStore.edgeEv).toFixed(1) }}%</span>
       </div>
 
-      <button
-        @click="ladderStore.winStep"
-        :disabled="ladderStore.loading || ladderStore.customOdds <= 1.0"
-        class="w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 text-white font-bold rounded-xl shadow-lg flex items-center justify-center gap-2 transition-all cursor-pointer"
-      >
-        <Trophy class="w-4 h-4" />
-        Vencer Passo & Atualizar Banca 🎉
-      </button>
+      <div class="flex gap-2">
+        <button
+          @click="ladderStore.loseStep"
+          :disabled="ladderStore.loading"
+          class="flex-1 py-3 bg-rose-900 hover:bg-rose-800 disabled:opacity-50 text-white font-bold rounded-xl flex items-center justify-center transition-all cursor-pointer border border-rose-800"
+          title="Registrar derrota"
+        >
+          <XCircle class="w-4 h-4" />
+        </button>
+        <button
+          @click="ladderStore.winStep"
+          :disabled="ladderStore.loading || ladderStore.customOdds <= 1.0"
+          class="flex-[4] py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 text-white font-bold rounded-xl shadow-lg flex items-center justify-center gap-2 transition-all cursor-pointer"
+        >
+          <Trophy class="w-4 h-4" />
+          Vencer Passo 🎉
+        </button>
+      </div>
     </div>
   </div>
 </template>

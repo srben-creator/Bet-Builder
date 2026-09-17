@@ -146,6 +146,22 @@ public class LadderService : ILadderService
         );
     }
 
+    public async Task<LadderCurrentDto> LoseStepAsync(CancellationToken ct = default)
+    {
+        var active = await _db.LadderChallenges
+            .OrderByDescending(c => c.CreatedAt)
+            .FirstOrDefaultAsync(c => c.Status == "active", ct);
+
+        if (active != null)
+        {
+            active.Status = "busted";
+            active.CompletedAt = DateTime.UtcNow;
+            await _db.SaveChangesAsync(ct);
+        }
+
+        return await ResetChallengeAsync(ct);
+    }
+
     public async Task<LadderCurrentDto> ResetChallengeAsync(CancellationToken ct = default)
     {
         var active = await _db.LadderChallenges

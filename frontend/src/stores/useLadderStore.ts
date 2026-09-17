@@ -72,6 +72,16 @@ export const useLadderStore = defineStore('ladder', () => {
     }
   }
 
+  async function loseStep() {
+    loading.value = true
+    try {
+      challenge.value = await ApiService.loseLadderStep()
+      clearSlip()
+    } finally {
+      loading.value = false
+    }
+  }
+
   async function resetChallenge() {
     loading.value = true
     try {
@@ -97,6 +107,7 @@ export const useLadderStore = defineStore('ladder', () => {
     removeLeg,
     clearSlip,
     winStep,
+    loseStep,
     resetChallenge
   }
 })

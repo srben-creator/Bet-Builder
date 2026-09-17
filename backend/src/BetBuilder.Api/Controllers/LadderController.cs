@@ -52,6 +52,17 @@ public class LadderController : ControllerBase
     }
 
     /// <summary>
+    /// Registra a derrota do passo atual, arquivando o desafio.
+    /// </summary>
+    [HttpPost("step/lose")]
+    [ProducesResponseType(typeof(LadderCurrentDto), StatusCodes.Status200OK)]
+    public async Task<ActionResult<LadderCurrentDto>> LoseStep(CancellationToken ct = default)
+    {
+        var result = await _service.LoseStepAsync(ct);
+        return Ok(result);
+    }
+
+    /// <summary>
     /// Reinicia o desafio da Ladder de volta ao passo 1 com aposta inicial.
     /// </summary>
     [HttpPost("reset")]

@@ -30,4 +30,15 @@ public class ValueBetsController : ControllerBase
         var result = await _service.GetValueBetsAsync(minEdge, leagueId, date, ct);
         return Ok(result);
     }
+
+    /// <summary>
+    /// Retorna a lista de ligas ativas disponíveis para filtro.
+    /// </summary>
+    [HttpGet("leagues")]
+    [ProducesResponseType(typeof(List<LeagueDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<List<LeagueDto>>> GetLeagues(CancellationToken ct = default)
+    {
+        var result = await _service.GetActiveLeaguesAsync(ct);
+        return Ok(result);
+    }
 }

@@ -28,6 +28,11 @@ export const ApiService = {
     return res.data
   },
 
+  async getLeagues(): Promise<{ id: string; name: string }[]> {
+    const res = await api.get<{ id: string; name: string }[]>('/value-bets/leagues')
+    return res.data
+  },
+
   // Ladder
   async getLadderCurrent(): Promise<LadderCurrentDto> {
     const res = await api.get<LadderCurrentDto>('/ladder/current')
@@ -41,6 +46,11 @@ export const ApiService = {
 
   async winLadderStep(odds: number): Promise<LadderCurrentDto> {
     const res = await api.post<LadderCurrentDto>('/ladder/step/win', { odds })
+    return res.data
+  },
+
+  async loseLadderStep(): Promise<LadderCurrentDto> {
+    const res = await api.post<LadderCurrentDto>('/ladder/step/lose')
     return res.data
   },
 

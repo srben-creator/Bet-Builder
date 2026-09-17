@@ -111,4 +111,14 @@ public class ValueBetsService : IValueBetsService
 
         return result;
     }
+
+    public async Task<List<LeagueDto>> GetActiveLeaguesAsync(CancellationToken ct = default)
+    {
+        return await _db.Leagues
+            .AsNoTracking()
+            .Where(l => l.IsActive)
+            .OrderBy(l => l.Name)
+            .Select(l => new LeagueDto(l.Id, l.Name))
+            .ToListAsync(ct);
+    }
 }

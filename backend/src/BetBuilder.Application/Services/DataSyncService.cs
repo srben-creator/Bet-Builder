@@ -47,96 +47,66 @@ public class DataSyncService : IDataSyncService
         int fixturesUpdated = 0;
         int betsSettled = 0;
 
-        // 1. Fetch active leagues with fd_csv_code
+        var apiKey = _config["TheOddsApi:ApiKey"]
+                     ?? Environment.GetEnvironmentVariable("ODDS_API_KEY")
+                     ?? string.Empty;
+
+        if (string.IsNullOrWhiteSpace(apiKey))
+        {
+            return new SyncResultDto(
+                Success: false,
+                Message: "ODDS_API_KEY não configurada."
+            );
+        }
+
         var leagues = await _db.Leagues
             .Where(l => l.IsActive && !string.IsNullOrEmpty(l.FdCsvCode))
             .ToListAsync(ct);
 
         var teams = await _db.Teams.ToListAsync(ct);
-        var teamMap = teams.ToDictionary(t => (t.Name.ToLowerInvariant(), t.Country.ToLowerInvariant()), t => t.Id);
-
-        // Download recent CSV for each league from football-data.co.uk
-        // Current season string e.g. "2425"
-        int currentYear = DateTime.UtcNow.Year;
-        int seasonStart = DateTime.UtcNow.Month < 7 ? currentYear - 1 : currentYear;
-        string seasonCode = $"{seasonStart % 100:D2}{(seasonStart + 1) % 100:D2}";
 
         foreach (var league in leagues)
         {
-            var url = $"https://www.football-data.co.uk/mmz4281/{seasonCode}/{league.FdCsvCode}.csv";
+            if (!OddsApiSportKeys.TryGetValue(league.FdCsvCode!, out var sportKey))
+            {
+                continue;
+            }
+
+            var url = $"https://api.the-odds-api.com/v4/sports/{sportKey}/scores/?daysFrom=3&apiKey={apiKey}";
+
             try
             {
                 var response = await _http.GetAsync(url, ct);
                 if (!response.IsSuccessStatusCode)
                 {
+                    _logger.LogWarning("The Odds API returned {Status} for {SportKey} scores", response.StatusCode, sportKey);
                     continue;
                 }
 
-                var csvContent = await response.Content.ReadAsStringAsync(ct);
-                var lines = csvContent.Split('\n', StringSplitOptions.RemoveEmptyEntries);
-                if (lines.Length < 2)
+                var json = await response.Content.ReadAsStringAsync(ct);
+                using var doc = JsonDocument.Parse(json);
+
+                foreach (var ev in doc.RootElement.EnumerateArray())
                 {
-                    continue;
-                }
-
-                var headers = lines[0].Split(',').Select(h => h.Trim()).ToArray();
-                int idxDate = Array.IndexOf(headers, "Date");
-                int idxHome = Array.IndexOf(headers, "HomeTeam");
-                int idxAway = Array.IndexOf(headers, "AwayTeam");
-                int idxFthg = Array.IndexOf(headers, "FTHG");
-                int idxFtag = Array.IndexOf(headers, "FTAG");
-                int idxFtr = Array.IndexOf(headers, "FTR");
-
-                if (idxDate < 0 || idxHome < 0 || idxAway < 0 || idxFthg < 0 || idxFtag < 0)
-                {
-                    continue;
-                }
-
-                var season = await _db.Seasons
-                    .FirstOrDefaultAsync(s => s.LeagueId == league.Id && s.IsCurrent, ct);
-
-                if (season == null)
-                {
-                    continue;
-                }
-
-                for (int i = 1; i < lines.Length; i++)
-                {
-                    var cols = lines[i].Split(',');
-                    if (cols.Length <= Math.Max(idxFthg, idxFtag))
+                    if (!ev.TryGetProperty("completed", out var comp) || !comp.GetBoolean())
                     {
                         continue;
                     }
 
-                    var rawHome = cols[idxHome].Trim();
-                    var rawAway = cols[idxAway].Trim();
-                    var dateStr = cols[idxDate].Trim();
-                    var fthgStr = cols[idxFthg].Trim();
-                    var ftagStr = cols[idxFtag].Trim();
-                    var ftrStr = idxFtr >= 0 && cols.Length > idxFtr ? cols[idxFtr].Trim() : null;
+                    var homeTeamName = ev.GetProperty("home_team").GetString();
+                    var awayTeamName = ev.GetProperty("away_team").GetString();
+                    var commenceTimeStr = ev.GetProperty("commence_time").GetString();
 
-                    if (string.IsNullOrEmpty(rawHome) || string.IsNullOrEmpty(rawAway) || string.IsNullOrEmpty(fthgStr) || string.IsNullOrEmpty(ftagStr))
+                    if (string.IsNullOrEmpty(homeTeamName) || string.IsNullOrEmpty(awayTeamName) || string.IsNullOrEmpty(commenceTimeStr))
                     {
                         continue;
                     }
 
-                    if (!int.TryParse(fthgStr, out int fthg) || !int.TryParse(ftagStr, out int ftag))
-                    {
-                        continue;
-                    }
+                    var commenceDt = DateTime.Parse(commenceTimeStr, CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal);
+                    var matchDate = DateOnly.FromDateTime(commenceDt);
 
-                    DateOnly matchDate;
-                    if (!DateOnly.TryParseExact(dateStr, new[] { "dd/MM/yyyy", "dd/MM/yy" }, CultureInfo.InvariantCulture, DateTimeStyles.None, out matchDate))
-                    {
-                        if (!DateOnly.TryParse(dateStr, out matchDate))
-                        {
-                            continue;
-                        }
-                    }
-
-                    // Find team IDs
-                    var homeTeam = teams.FirstOrDefault(t => t.Country == league.Country && (t.Name.Equals(rawHome, StringComparison.OrdinalIgnoreCase) || (t.FdName != null && t.FdName.Equals(rawHome, StringComparison.OrdinalIgnoreCase))));
-                    var awayTeam = teams.FirstOrDefault(t => t.Country == league.Country && (t.Name.Equals(rawAway, StringComparison.OrdinalIgnoreCase) || (t.FdName != null && t.FdName.Equals(rawAway, StringComparison.OrdinalIgnoreCase))));
+                    var homeTeam = teams.FirstOrDefault(t => t.Country == league.Country && (t.Name.Equals(homeTeamName, StringComparison.OrdinalIgnoreCase) || homeTeamName.Contains(t.Name, StringComparison.OrdinalIgnoreCase)));
+                    var awayTeam = teams.FirstOrDefault(t => t.Country == league.Country && (t.Name.Equals(awayTeamName, StringComparison.OrdinalIgnoreCase) || awayTeamName.Contains(t.Name, StringComparison.OrdinalIgnoreCase)));
 
                     if (homeTeam == null || awayTeam == null)
                     {
@@ -146,14 +116,33 @@ public class DataSyncService : IDataSyncService
                     var fixture = await _db.Fixtures
                         .FirstOrDefaultAsync(f => f.HomeTeamId == homeTeam.Id && f.AwayTeamId == awayTeam.Id && f.MatchDate == matchDate, ct);
 
-                    if (fixture != null)
+                    if (fixture != null && ev.TryGetProperty("scores", out var scores) && scores.GetArrayLength() == 2)
                     {
-                        fixture.HomeGoals = fthg;
-                        fixture.AwayGoals = ftag;
-                        fixture.Result = ftrStr ?? (fthg > ftag ? "H" : fthg < ftag ? "A" : "D");
-                        fixture.Status = "completed";
-                        fixture.UpdatedAt = DateTime.UtcNow;
-                        fixturesUpdated++;
+                        int fthg = 0;
+                        int ftag = 0;
+                        bool parsedH = false;
+                        bool parsedA = false;
+
+                        foreach (var s in scores.EnumerateArray())
+                        {
+                            var sName = s.GetProperty("name").GetString();
+                            var scoreStr = s.GetProperty("score").GetString();
+                            if (int.TryParse(scoreStr, out int scoreVal))
+                            {
+                                if (sName == homeTeamName) { fthg = scoreVal; parsedH = true; }
+                                else if (sName == awayTeamName) { ftag = scoreVal; parsedA = true; }
+                            }
+                        }
+
+                        if (parsedH && parsedA)
+                        {
+                            fixture.HomeGoals = fthg;
+                            fixture.AwayGoals = ftag;
+                            fixture.Result = fthg > ftag ? "H" : fthg < ftag ? "A" : "D";
+                            fixture.Status = "completed";
+                            fixture.UpdatedAt = DateTime.UtcNow;
+                            fixturesUpdated++;
+                        }
                     }
                 }
 
@@ -161,7 +150,7 @@ public class DataSyncService : IDataSyncService
             }
             catch (Exception ex)
             {
-                _logger.LogWarning(ex, "Failed to download results for league {League}", league.Name);
+                _logger.LogWarning(ex, "Failed to fetch scores for league {League}", league.Name);
             }
         }
 
@@ -564,7 +553,10 @@ public class DataSyncService : IDataSyncService
                         .Where(o => o.FixtureId == fix.Id)
                         .ToListAsync(ct);
 
-                    var pinOdd = oddsList.FirstOrDefault(o => o.Bookmaker.Code.ToLower() == "pinnacle");
+                    var pinnacleMap = oddsList
+                        .Where(o => o.Bookmaker.Code.ToLower() == "pinnacle")
+                        .GroupBy(o => (o.Market, o.Selection))
+                        .ToDictionary(g => g.Key, g => g.Last().Price);
 
                     foreach (var odd in oddsList)
                     {
@@ -617,8 +609,8 @@ public class DataSyncService : IDataSyncService
                             continue;
                         }
 
-                        double? pinPrice = pinOdd != null && pinOdd.Market == odd.Market && pinOdd.Selection == odd.Selection
-                            ? (double)pinOdd.Price
+                        double? pinPrice = pinnacleMap.TryGetValue((odd.Market, odd.Selection), out var price)
+                            ? (double)price
                             : null;
 
                         if (!KellyCalculator.IsPinnacleSharpLineBeaten((double)odd.Price, pinPrice))

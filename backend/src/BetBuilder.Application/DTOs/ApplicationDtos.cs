@@ -1,5 +1,7 @@
 namespace BetBuilder.Application.DTOs;
 
+public record LeagueDto(Guid Id, string Name);
+
 public record ValueBetDto(
     Guid Id,
     Guid FixtureId,

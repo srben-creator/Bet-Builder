@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { ApiService } from '../api/client'
 import type { ValueBetDto } from '../api/types'
 import Badge from '../components/ui/Badge.vue'
@@ -9,32 +9,42 @@ const valueBets = ref<ValueBetDto[]>([])
 const loading = ref(true)
 const minEdge = ref(2.0)
 const searchQuery = ref('')
-const selectedLeague = ref('Todas')
+const selectedLeagueId = ref<string>('')
+const availableLeagues = ref<{ id: string; name: string }[]>([])
 
 async function loadData() {
   loading.value = true
   try {
-    valueBets.value = await ApiService.getValueBets(minEdge.value)
+    const idParam = selectedLeagueId.value ? selectedLeagueId.value : undefined
+    valueBets.value = await ApiService.getValueBets(minEdge.value, idParam)
   } finally {
     loading.value = false
   }
 }
 
-onMounted(loadData)
+async function loadLeagues() {
+  try {
+    availableLeagues.value = await ApiService.getLeagues()
+  } catch (e) {
+    console.error("Failed to load leagues", e)
+  }
+}
 
-const availableLeagues = computed(() => {
-  const set = new Set(valueBets.value.map(v => v.league))
-  return ['Todas', ...Array.from(set).sort()]
+onMounted(() => {
+  loadLeagues()
+  loadData()
+})
+
+watch([minEdge, selectedLeagueId], () => {
+  loadData()
 })
 
 const filteredBets = computed(() => {
+  if (!searchQuery.value) return valueBets.value
+  
   return valueBets.value.filter(bet => {
-    const matchesEdge = bet.edgeEv >= minEdge.value
-    const matchesLeague = selectedLeague.value === 'Todas' || bet.league === selectedLeague.value
-    const matchesSearch = !searchQuery.value ||
-      bet.match.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      bet.selection.toLowerCase().includes(searchQuery.value.toLowerCase())
-    return matchesEdge && matchesLeague && matchesSearch
+    return bet.match.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+           bet.selection.toLowerCase().includes(searchQuery.value.toLowerCase())
   })
 })
 </script>
@@ -79,10 +89,11 @@ const filteredBets = computed(() => {
       <div class="flex items-center gap-2">
         <Filter class="w-4 h-4 text-slate-400" />
         <select
-          v-model="selectedLeague"
+          v-model="selectedLeagueId"
           class="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-emerald-500"
         >
-          <option v-for="l in availableLeagues" :key="l" :value="l">{{ l }}</option>
+          <option value="">Todas</option>
+          <option v-for="l in availableLeagues" :key="l.id" :value="l.id">{{ l.name }}</option>
         </select>
       </div>
 
@@ -97,7 +108,6 @@ const filteredBets = computed(() => {
           min="0.5"
           max="15.0"
           step="0.5"
-          @change="loadData"
           class="w-full accent-emerald-500 cursor-pointer"
         />
       </div>
