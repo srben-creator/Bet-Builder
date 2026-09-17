@@ -82,12 +82,12 @@ const navItems = [
 
     <!-- Progress Indicator -->
     <div
-      v-if="syncStore.syncProgress && !syncStore.lastResult"
+      v-if="syncStore.syncingOdds || syncStore.syncingResults"
       class="border-t text-xs py-2 px-4 flex items-center justify-between bg-blue-950/80 text-blue-300 border-blue-800"
     >
       <div class="max-w-7xl mx-auto w-full flex items-center gap-2">
         <RefreshCw class="w-3.5 h-3.5 animate-spin" />
-        <span class="font-medium animate-pulse">{{ syncStore.syncProgress }}</span>
+        <span class="font-medium animate-pulse">{{ syncStore.syncProgress || 'Processando...' }}</span>
       </div>
     </div>
 

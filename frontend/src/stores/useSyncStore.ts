@@ -17,15 +17,17 @@ export const useSyncStore = defineStore('sync', () => {
     .build()
 
   connection.on('ReceiveSyncProgress', (message: string) => {
+    console.log('SignalR progress received:', message)
     syncProgress.value = message
   })
 
   // Start connection
-  connection.start().catch(err => console.error('SignalR error:', err))
+  connection.start().then(() => console.log('SignalR connected!')).catch(err => console.error('SignalR error:', err))
 
   async function syncOdds(): Promise<SyncResultDto> {
     syncingOdds.value = true
     syncProgress.value = 'Iniciando requisição...'
+    console.log('syncOdds clicked, progress set to', syncProgress.value)
     lastResult.value = null
     try {
       const res = await ApiService.syncLiveOdds()
