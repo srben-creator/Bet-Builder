@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { ApiService } from '../api/client'
 import type { ValueBetDto } from '../api/types'
 import Badge from '../components/ui/Badge.vue'
 import { Filter, Search, TrendingUp } from 'lucide-vue-next'
+
+const { t } = useI18n()
 
 const valueBets = ref<ValueBetDto[]>([])
 const loading = ref(true)
@@ -51,7 +54,7 @@ const filteredBets = computed(() => {
 const currentPage = ref(1)
 const itemsPerPage = ref(20)
 
-watch([searchQuery, minEdge, selectedLeagueId], () => {
+watch([searchQuery, minEdge, selectedLeagueId, itemsPerPage], () => {
   currentPage.value = 1
 })
 
@@ -70,10 +73,10 @@ const totalPages = computed(() => Math.ceil(filteredBets.value.length / itemsPer
       <div>
         <h2 class="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
           <span>💰</span>
-          <span>+EV Value Bets Tracker</span>
+          <span>{{ $t('valueBets.title') }}</span>
         </h2>
         <p class="text-sm text-slate-400 mt-1">
-          Apostas com vantagem estatística matemática calculadas pelo modelo Dixon-Coles contra a linha de corte da Pinnacle.
+          {{ $t('valueBets.subtitle') }}
         </p>
       </div>
 
@@ -81,7 +84,7 @@ const totalPages = computed(() => Math.ceil(filteredBets.value.length / itemsPer
       <div class="flex items-center gap-2">
         <Badge variant="emerald">
           <TrendingUp class="w-3.5 h-3.5 mr-1" />
-          {{ filteredBets.length }} apostas de valor encontradas
+          {{ $t('valueBets.foundBets', { count: filteredBets.length }) }}
         </Badge>
       </div>
     </div>
@@ -94,7 +97,7 @@ const totalPages = computed(() => Math.ceil(filteredBets.value.length / itemsPer
         <input
           v-model="searchQuery"
           type="text"
-          placeholder="Buscar time ou seleção..."
+          :placeholder="$t('valueBets.searchPlaceholder')"
           class="w-full bg-slate-950 border border-slate-700 rounded-xl pl-9 pr-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500"
         />
       </div>
@@ -106,7 +109,7 @@ const totalPages = computed(() => Math.ceil(filteredBets.value.length / itemsPer
           v-model="selectedLeagueId"
           class="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-emerald-500"
         >
-          <option value="">Todas</option>
+          <option value="">{{ $t('valueBets.allLeagues') }}</option>
           <option v-for="l in availableLeagues" :key="l.id" :value="l.id">{{ l.name }}</option>
         </select>
       </div>
@@ -114,7 +117,7 @@ const totalPages = computed(() => Math.ceil(filteredBets.value.length / itemsPer
       <!-- Min Edge Slider -->
       <div class="flex items-center gap-3 min-w-[200px]">
         <label class="text-xs font-semibold text-slate-400 whitespace-nowrap">
-          Edge Mínimo: <span class="text-emerald-400 font-tabular">{{ minEdge.toFixed(1) }}%</span>
+          {{ $t('valueBets.minEdge') }} <span class="text-emerald-400 font-tabular">{{ minEdge.toFixed(1) }}%</span>
         </label>
         <input
           type="range"
@@ -130,14 +133,14 @@ const totalPages = computed(() => Math.ceil(filteredBets.value.length / itemsPer
     <!-- Loading Skeleton -->
     <div v-if="loading" class="py-16 text-center text-slate-400">
       <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-400 mb-3"></div>
-      <p class="text-sm">Carregando apostas de valor...</p>
+      <p class="text-sm">{{ $t('valueBets.loading') }}</p>
     </div>
 
     <!-- Empty State -->
     <div v-else-if="filteredBets.length === 0" class="bg-slate-900 border border-slate-800 rounded-2xl p-12 text-center">
       <span class="text-4xl">🔍</span>
-      <h3 class="text-lg font-bold text-slate-200 mt-3">Nenhuma aposta +EV encontrada</h3>
-      <p class="text-sm text-slate-400 mt-1">Tente reduzir o Edge mínimo ou clique no botão "Sync Odds" no cabeçalho para baixar novas cotações.</p>
+      <h3 class="text-lg font-bold text-slate-200 mt-3">{{ $t('valueBets.noBetsFound') }}</h3>
+      <p class="text-sm text-slate-400 mt-1">{{ $t('valueBets.noBetsTip') }}</p>
     </div>
 
     <!-- Data Table -->
@@ -146,18 +149,18 @@ const totalPages = computed(() => Math.ceil(filteredBets.value.length / itemsPer
         <table class="w-full text-left text-sm relative">
           <thead class="sticky top-0 z-10 bg-slate-950 text-slate-400 text-xs uppercase font-semibold shadow-[0_1px_0_0_#1e293b]">
             <tr>
-              <th class="py-3.5 px-4 bg-slate-950">Data</th>
-              <th class="py-3.5 px-4 bg-slate-950">Liga</th>
-              <th class="py-3.5 px-4 bg-slate-950">Partida</th>
-              <th class="py-3.5 px-4 bg-slate-950">Mercado</th>
-              <th class="py-3.5 px-4 bg-slate-950">Seleção</th>
-              <th class="py-3.5 px-4 bg-slate-950 text-right">Prob %</th>
-              <th class="py-3.5 px-4 bg-slate-950 text-right">True Odds</th>
-              <th class="py-3.5 px-4 bg-slate-950 text-right">Pinnacle</th>
-              <th class="py-3.5 px-4 bg-slate-950">Casa</th>
-              <th class="py-3.5 px-4 bg-slate-950 text-right">Odd</th>
-              <th class="py-3.5 px-4 bg-slate-950 text-right font-bold text-emerald-400">Edge (+EV)</th>
-              <th class="py-3.5 px-4 bg-slate-950 text-right">Stake Kelly</th>
+              <th class="py-3.5 px-4 bg-slate-950">{{ $t('valueBets.table.date') }}</th>
+              <th class="py-3.5 px-4 bg-slate-950">{{ $t('valueBets.table.league') }}</th>
+              <th class="py-3.5 px-4 bg-slate-950">{{ $t('valueBets.table.match') }}</th>
+              <th class="py-3.5 px-4 bg-slate-950">{{ $t('valueBets.table.market') }}</th>
+              <th class="py-3.5 px-4 bg-slate-950">{{ $t('valueBets.table.selection') }}</th>
+              <th class="py-3.5 px-4 bg-slate-950 text-right">{{ $t('valueBets.table.probPercent') }}</th>
+              <th class="py-3.5 px-4 bg-slate-950 text-right">{{ $t('valueBets.table.trueOdds') }}</th>
+              <th class="py-3.5 px-4 bg-slate-950 text-right">{{ $t('valueBets.table.pinnacle') }}</th>
+              <th class="py-3.5 px-4 bg-slate-950">{{ $t('valueBets.table.bookmaker') }}</th>
+              <th class="py-3.5 px-4 bg-slate-950 text-right">{{ $t('valueBets.table.odd') }}</th>
+              <th class="py-3.5 px-4 bg-slate-950 text-right font-bold text-emerald-400">{{ $t('valueBets.table.edge') }}</th>
+              <th class="py-3.5 px-4 bg-slate-950 text-right">{{ $t('valueBets.table.stakeKelly') }}</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-800/60 font-tabular">
@@ -191,10 +194,24 @@ const totalPages = computed(() => Math.ceil(filteredBets.value.length / itemsPer
       
       <!-- Pagination Controls -->
       <div class="bg-slate-950/50 border-t border-slate-800 p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div class="text-xs text-slate-400">
-          Mostrando <span class="font-bold text-slate-200">{{ ((currentPage - 1) * itemsPerPage) + 1 }}</span> a 
-          <span class="font-bold text-slate-200">{{ Math.min(currentPage * itemsPerPage, filteredBets.length) }}</span> de 
-          <span class="font-bold text-slate-200">{{ filteredBets.length }}</span> resultados
+        <div class="flex items-center gap-4 text-xs text-slate-400">
+          <div class="flex items-center gap-2">
+            <span>{{ $t('valueBets.pagination.showing') }}</span>
+            <select
+              v-model="itemsPerPage"
+              class="bg-slate-900 border border-slate-700 rounded px-2 py-1 focus:outline-none focus:border-emerald-500 text-slate-200 cursor-pointer"
+            >
+              <option :value="10">10</option>
+              <option :value="20">20</option>
+              <option :value="50">50</option>
+              <option :value="100">100</option>
+            </select>
+          </div>
+          <div>
+            {{ $t('valueBets.pagination.showing') }} <span class="font-bold text-slate-200">{{ filteredBets.length === 0 ? 0 : ((currentPage - 1) * itemsPerPage) + 1 }}</span> {{ $t('valueBets.pagination.to') }} 
+            <span class="font-bold text-slate-200">{{ Math.min(currentPage * itemsPerPage, filteredBets.length) }}</span> {{ $t('valueBets.pagination.of') }} 
+            <span class="font-bold text-slate-200">{{ filteredBets.length }}</span> {{ $t('valueBets.pagination.results') }}
+          </div>
         </div>
         
         <div class="flex items-center gap-2">
@@ -203,17 +220,17 @@ const totalPages = computed(() => Math.ceil(filteredBets.value.length / itemsPer
             :disabled="currentPage === 1"
             class="px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
           >
-            Anterior
+            {{ $t('valueBets.pagination.prev') }}
           </button>
           <div class="text-xs font-semibold text-slate-400 px-2">
-            Pág {{ currentPage }} / {{ totalPages || 1 }}
+            {{ $t('valueBets.pagination.page', { current: currentPage, total: totalPages || 1 }) }}
           </div>
           <button 
             @click="currentPage < totalPages && currentPage++"
             :disabled="currentPage >= totalPages"
             class="px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
           >
-            Próxima
+            {{ $t('valueBets.pagination.next') }}
           </button>
         </div>
       </div>
@@ -221,12 +238,12 @@ const totalPages = computed(() => Math.ceil(filteredBets.value.length / itemsPer
 
     <!-- Educational Footer -->
     <div class="bg-slate-900/60 border border-slate-800/80 rounded-xl p-4 text-xs text-slate-400 leading-relaxed space-y-1">
-      <div class="font-bold text-slate-200">💡 Como interpretar esta tabela:</div>
-      <div>• <strong>Prob %</strong>: Probabilidade matemática calculada pelo motor Dixon-Coles com base no xG histórico.</div>
-      <div>• <strong>True Odds</strong>: A cotação justa teórica (1 / Probabilidade).</div>
-      <div>• <strong>Pinnacle</strong>: A linha da casa mais afiada do mundo. Usada como filtro de segurança (a aposta só é exibida se a cotação da casa recreativa for superior à da Pinnacle).</div>
-      <div>• <strong>Edge (+EV)</strong>: Sua vantagem percentual estimada sobre a margem da casa.</div>
-      <div>• <strong>Stake Kelly</strong>: Fração conservadora recomendada da sua banca total (estratégia Quarter-Kelly).</div>
+      <div class="font-bold text-slate-200">{{ $t('valueBets.help.title') }}</div>
+      <div>• <strong>{{ $t('valueBets.table.probPercent') }}</strong>: {{ $t('valueBets.help.prob') }}</div>
+      <div>• <strong>{{ $t('valueBets.table.trueOdds') }}</strong>: {{ $t('valueBets.help.trueOdds') }}</div>
+      <div>• <strong>{{ $t('valueBets.table.pinnacle') }}</strong>: {{ $t('valueBets.help.pinnacle') }}</div>
+      <div>• <strong>{{ $t('valueBets.table.edge') }}</strong>: {{ $t('valueBets.help.edge') }}</div>
+      <div>• <strong>{{ $t('valueBets.table.stakeKelly') }}</strong>: {{ $t('valueBets.help.stakeKelly') }}</div>
     </div>
   </div>
 </template>

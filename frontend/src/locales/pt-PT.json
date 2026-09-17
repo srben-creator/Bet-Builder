@@ -1,0 +1,138 @@
+{
+  "nav": {
+    "valueBets": "Value Bets (+EV)",
+    "ladder": "Honest Ladder",
+    "fixtures": "Jogos Agendados",
+    "performance": "Performance & P&L",
+    "backtest": "Backtest & CLV"
+  },
+  "header": {
+    "subtitle": "Quantitative Edge",
+    "syncOdds": "Sync Odds",
+    "syncing": "Buscando...",
+    "settle": "Liquidar",
+    "settling": "Liquidando...",
+    "apiDocs": "API Docs",
+    "processing": "Processando...",
+    "close": "Fechar"
+  },
+  "valueBets": {
+    "title": "+EV Value Bets Tracker",
+    "subtitle": "Apostas com vantagem estatística matemática calculadas pelo modelo Dixon-Coles contra a linha de corte da Pinnacle.",
+    "foundBets": "{count} apostas de valor encontradas",
+    "searchPlaceholder": "Buscar time ou seleção...",
+    "allLeagues": "Todas",
+    "minEdge": "Edge Mínimo:",
+    "loading": "Carregando apostas de valor...",
+    "noBetsFound": "Nenhuma aposta +EV encontrada",
+    "noBetsTip": "Tente reduzir o Edge mínimo ou clique no botão \"Sync Odds\" no cabeçalho para baixar novas cotações.",
+    "table": {
+      "date": "Data",
+      "league": "Liga",
+      "match": "Partida",
+      "market": "Mercado",
+      "selection": "Seleção",
+      "probPercent": "Prob %",
+      "trueOdds": "True Odds",
+      "pinnacle": "Pinnacle",
+      "bookmaker": "Casa",
+      "odd": "Odd",
+      "edge": "Edge (+EV)",
+      "stakeKelly": "Stake Kelly"
+    },
+    "pagination": {
+      "showing": "Mostrando",
+      "to": "a",
+      "of": "de",
+      "results": "resultados",
+      "prev": "Anterior",
+      "next": "Próxima",
+      "page": "Pág {current} / {total}"
+    },
+    "help": {
+      "title": "💡 Como interpretar esta tabela:",
+      "prob": "Probabilidade matemática calculada pelo motor Dixon-Coles com base no xG histórico.",
+      "trueOdds": "A cotação justa teórica (1 / Probabilidade).",
+      "pinnacle": "A linha da casa mais afiada do mundo. Usada como filtro de segurança (a aposta só é exibida se a cotação da casa recreativa for superior à da Pinnacle).",
+      "edge": "Sua vantagem percentual estimada sobre a margem da casa.",
+      "stakeKelly": "Fração conservadora recomendada da sua banca total (estratégia Quarter-Kelly)."
+    }
+  },
+  "ladder": {
+    "title": "The Honest Ladder Challenge",
+    "subtitle": "Estratégia de crescimento composto de banca através de seleções de altíssima probabilidade com proteção contra correlação.",
+    "currentBankroll": "Banca Atual",
+    "currentBankrollDesc": "Saldo composto acumulado",
+    "targetAmount": "Meta Final",
+    "targetAmountDesc": "Objetivo do desafio",
+    "currentStep": "Passo Atual",
+    "currentStepDesc": "Etapa em andamento",
+    "step": "Passo",
+    "bankAction": "Ação de Banca",
+    "reset": "Reiniciar Ladder",
+    "resetDesc": "Volta ao Passo 1 com €5.00",
+    "safeLegs": "Seleções Seguras (>75% Prob)",
+    "dateFilter": "Data:",
+    "allDates": "Todas",
+    "loading": "Carregando pernas seguras...",
+    "noLegs": "Nenhuma seleção de alta probabilidade disponível no momento.",
+    "noLegsTip": "Execute o sincronismo de odds pelo botão \"Sync Odds\" no cabeçalho.",
+    "prob": "prob",
+    "add": "Adicionar",
+    "added": "Adicionado"
+  },
+  "slipDrawer": {
+    "title": "Boletim (Step {step})",
+    "clear": "Limpar",
+    "combinedOdds": "Odd Combinada:",
+    "suggestedStake": "Stake Sugerida:",
+    "placeBet": "Registrar na Ladder",
+    "empty": "Nenhuma perna selecionada",
+    "emptyTip": "Adicione seleções da lista de pernas seguras para começar."
+  },
+  "fixtures": {
+    "title": "Jogos Agendados & Resumo de Formato",
+    "subtitle": "Partidas das próximas semanas com xG esperado e previsões do modelo Dixon-Coles pre-match.",
+    "loading": "Carregando partidas...",
+    "noFixtures": "Nenhum jogo agendado para o período atual.",
+    "table": {
+      "date": "Data",
+      "league": "Liga",
+      "home": "Casa",
+      "away": "Fora",
+      "homeWin": "Vitória Casa",
+      "draw": "Empate",
+      "awayWin": "Vitória Fora",
+      "expectedGoals": "xG Esperado (Casa vs Fora)"
+    }
+  },
+  "performance": {
+    "title": "Análise de Performance & P&L",
+    "subtitle": "Estatísticas agregadas, curva de capital (Bankroll) e quebra de lucros por ligas e mercados.",
+    "metrics": {
+      "roi": "ROI Total",
+      "profit": "Lucro Líquido",
+      "winRate": "Taxa de Acerto (Win Rate)",
+      "totalBets": "Total Apostas (Resolvidas)"
+    },
+    "charts": {
+      "cumulative": "Curva de Capital (Cumulative P&L)",
+      "byLeague": "Lucro por Liga"
+    },
+    "loading": "Carregando métricas de performance..."
+  },
+  "backtest": {
+    "title": "Closing Line Value (CLV) & Backtest",
+    "subtitle": "Analise a precisão das apostas vs. cotações de fechamento (Closing Line). Bater a CLV é o único indicador preditivo real a longo prazo.",
+    "metrics": {
+      "avgClv": "CLV Médio",
+      "beatClvRate": "Taxa Beating CLV",
+      "expectedYield": "Yield Esperado"
+    },
+    "loading": "Processando histórico de CLV...",
+    "charts": {
+      "clvProgression": "CLV Médio vs Yield Real",
+      "scatter": "Dispersão de Odds de Fechamento"
+    }
+  }
+}

@@ -1,0 +1,146 @@
+{
+  "nav": {
+    "valueBets": "Value Bets (+EV)",
+    "ladder": "Honest Ladder",
+    "fixtures": "Scheduled Matches",
+    "performance": "Performance & P&L",
+    "backtest": "Backtest & CLV"
+  },
+  "header": {
+    "subtitle": "Quantitative Edge",
+    "syncOdds": "Sync Odds",
+    "syncing": "Fetching...",
+    "settle": "Settle Bets",
+    "settling": "Settling...",
+    "apiDocs": "API Docs",
+    "processing": "Processing...",
+    "close": "Close"
+  },
+  "valueBets": {
+    "title": "+EV Value Bets Tracker",
+    "subtitle": "Mathematical edge bets calculated by the Dixon-Coles model against Pinnacle's closing line.",
+    "foundBets": "{count} value bets found",
+    "searchPlaceholder": "Search team or selection...",
+    "allLeagues": "All",
+    "minEdge": "Min Edge:",
+    "loading": "Loading value bets...",
+    "noBetsFound": "No +EV bets found",
+    "noBetsTip": "Try lowering the minimum Edge or click \"Sync Odds\" in the header to fetch new odds.",
+    "table": {
+      "date": "Date",
+      "league": "League",
+      "match": "Match",
+      "market": "Market",
+      "selection": "Selection",
+      "probPercent": "Prob %",
+      "trueOdds": "True Odds",
+      "pinnacle": "Pinnacle",
+      "bookmaker": "Bookie",
+      "odd": "Odd",
+      "edge": "Edge (+EV)",
+      "stakeKelly": "Kelly Stake"
+    },
+    "pagination": {
+      "showing": "Showing",
+      "to": "to",
+      "of": "of",
+      "results": "results",
+      "prev": "Previous",
+      "next": "Next",
+      "page": "Page {current} / {total}"
+    },
+    "help": {
+      "title": "💡 How to interpret this table:",
+      "prob": "Mathematical probability calculated by the Dixon-Coles engine based on historical xG.",
+      "trueOdds": "Theoretical fair odds (1 / Probability).",
+      "pinnacle": "The sharpest bookmaker line. Used as a safety filter (bet is only shown if recreational bookmaker odds are higher than Pinnacle's).",
+      "edge": "Your estimated percentage edge over the bookmaker's margin.",
+      "stakeKelly": "Recommended conservative fraction of your total bankroll (Quarter-Kelly strategy)."
+    }
+  },
+  "ladder": {
+    "title": "Honest Ladder",
+    "subtitle": "Transparent and immutable tracking of your registered bets. No deletions, no post-factum edits.",
+    "totalBets": "Total Bets",
+    "pending": "Pending",
+    "winRate": "Win Rate",
+    "loading": "Loading ladder bets...",
+    "noBets": "No bets registered in the ladder.",
+    "noBetsTip": "Go to the Value Bets page to find and register bets.",
+    "table": {
+      "date": "Date",
+      "match": "Match",
+      "selection": "Selection / Market",
+      "odd": "Odd",
+      "stake": "Stake",
+      "status": "Status",
+      "pnl": "P&L",
+      "settledAt": "Settled At"
+    },
+    "status": {
+      "pending": "Pending",
+      "won": "Won",
+      "lost": "Lost",
+      "void": "Void"
+    }
+  },
+  "fixtures": {
+    "title": "Scheduled Matches & Form Overview",
+    "subtitle": "Upcoming matches with expected xG and Dixon-Coles pre-match predictions.",
+    "loading": "Loading fixtures...",
+    "noFixtures": "No matches scheduled for the current period.",
+    "table": {
+      "date": "Date",
+      "league": "League",
+      "home": "Home",
+      "away": "Away",
+      "homeWin": "Home Win",
+      "draw": "Draw",
+      "awayWin": "Away Win",
+      "expectedGoals": "Expected xG (Home vs Away)"
+    }
+  },
+  "performance": {
+    "title": "Performance & P&L Analysis",
+    "subtitle": "Aggregate stats, bankroll curve, and profit breakdown by leagues and markets.",
+    "metrics": {
+      "roi": "Total ROI",
+      "profit": "Net Profit",
+      "winRate": "Win Rate",
+      "totalBets": "Total Bets (Settled)"
+    },
+    "charts": {
+      "cumulative": "Bankroll Curve (Cumulative P&L)",
+      "byLeague": "Profit by League"
+    },
+    "loading": "Loading performance metrics..."
+  },
+  "backtest": {
+    "title": "Closing Line Value (CLV) & Backtest",
+    "subtitle": "Analyze bet accuracy vs. closing line odds. Beating CLV is the only real predictive indicator in the long term.",
+    "metrics": {
+      "avgClv": "Avg CLV",
+      "beatClvRate": "Beat CLV Rate",
+      "expectedYield": "Expected Yield"
+    },
+    "loading": "Processing CLV history...",
+    "charts": {
+      "clvProgression": "Avg CLV vs Actual Yield",
+      "scatter": "Closing Odds Scatter"
+    }
+  },
+  "slipDrawer": {
+    "title": "Confirm Bet",
+    "description": "Review the Edge and adjust the suggested Stake before registering.",
+    "match": "Match",
+    "market": "Market",
+    "selection": "Selection",
+    "odds": "Offered Odds",
+    "trueOdds": "True Odds",
+    "edge": "Edge (+EV)",
+    "bookmaker": "Bookmaker",
+    "stake": "Stake Amount (€)",
+    "cancel": "Cancel",
+    "confirm": "Register on Ladder"
+  }
+}
