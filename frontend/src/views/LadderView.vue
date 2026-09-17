@@ -5,7 +5,8 @@ import { useLadderStore } from '../stores/useLadderStore'
 import MetricCard from '../components/ui/MetricCard.vue'
 import SlipDrawer from '../components/ladder/SlipDrawer.vue'
 import Badge from '../components/ui/Badge.vue'
-import { Plus, RotateCcw, ShieldCheck } from 'lucide-vue-next'
+import PinnacleIcon from '../components/ui/PinnacleIcon.vue'
+import { Plus, RotateCcw, Scale, ShieldCheck } from 'lucide-vue-next'
 
 const { t } = useI18n()
 const ladderStore = useLadderStore()
@@ -119,9 +120,43 @@ function isAlreadyInSlip(leg: any) {
             <div class="space-y-1">
               <div class="text-xs text-slate-500">{{ leg.date }}</div>
               <div class="font-semibold text-slate-100 text-sm">{{ leg.match }}</div>
-              <div class="flex items-center gap-2">
+              <div class="flex items-center gap-2 flex-wrap">
                 <Badge variant="blue">{{ leg.market }}</Badge>
                 <span class="text-xs font-bold text-emerald-400 font-tabular">🎯 {{ (leg.prob * 100).toFixed(1) }}% {{ t('ladder.prob') }}</span>
+                
+                <!-- Odd Justa (1 / Probabilidade) -->
+                <span
+                  class="text-xs font-bold text-sky-300 bg-sky-950/60 px-1.5 py-0.5 rounded border border-sky-800/50 font-tabular inline-flex items-center gap-1 shadow-sm"
+                  :title="t('ladder.fairOddsTitle')"
+                >
+                  <Scale class="w-3.5 h-3.5 text-sky-400" />
+                  <span>{{ t('ladder.fair') }} {{ (leg.fairOdds || (1.0 / leg.prob)).toFixed(2) }}</span>
+                </span>
+
+                <!-- Odd de Mercado Pinnacle -->
+                <span
+                  v-if="leg.pinnacleOdds"
+                  class="text-xs font-bold text-amber-300 bg-amber-950/60 px-1.5 py-0.5 rounded border border-amber-800/50 font-tabular inline-flex items-center gap-1 shadow-sm"
+                  title="Odd de Mercado Pinnacle"
+                >
+                  <PinnacleIcon class="w-3.5 h-3.5" />
+                  <span>{{ leg.pinnacleOdds.toFixed(2) }}</span>
+                </span>
+
+                <!-- Indicador de Valor (+EV / -EV) -->
+                <span
+                  v-if="leg.pinnacleOdds"
+                  class="text-[11px] font-bold px-1.5 py-0.5 rounded font-tabular inline-flex items-center gap-0.5"
+                  :class="leg.pinnacleOdds >= (leg.fairOdds || (1.0 / leg.prob))
+                    ? 'bg-emerald-950/70 text-emerald-300 border border-emerald-800/60'
+                    : 'bg-rose-950/50 text-rose-300/80 border border-rose-900/40'"
+                  :title="leg.pinnacleOdds >= (leg.fairOdds || (1.0 / leg.prob))
+                    ? 'Aposta com Valor Esperado Positivo (+EV) contra a Pinnacle'
+                    : 'Sem valor esperado contra a cotação da Pinnacle (-EV)'"
+                >
+                  <span>{{ leg.pinnacleOdds >= (leg.fairOdds || (1.0 / leg.prob)) ? '+EV' : '-EV' }}</span>
+                  <span class="opacity-75 text-[10px]">({{ (((leg.prob * leg.pinnacleOdds) - 1.0) * 100).toFixed(1) }}%)</span>
+                </span>
               </div>
             </div>
 
