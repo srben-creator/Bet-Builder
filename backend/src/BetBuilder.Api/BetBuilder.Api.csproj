@@ -22,4 +22,10 @@
     <ProjectReference Include="..\BetBuilder.Domain\BetBuilder.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="secret.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
