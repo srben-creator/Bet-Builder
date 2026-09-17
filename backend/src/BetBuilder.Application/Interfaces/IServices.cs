@@ -2,6 +2,11 @@ using BetBuilder.Application.DTOs;
 
 namespace BetBuilder.Application.Interfaces;
 
+public interface ISyncNotifier
+{
+    Task SendProgressAsync(string message, CancellationToken ct = default);
+}
+
 public interface IValueBetsService
 {
     Task<List<ValueBetDto>> GetValueBetsAsync(double minEdge = 2.0, Guid? leagueId = null, string? date = null, CancellationToken ct = default);

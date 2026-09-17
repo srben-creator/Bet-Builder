@@ -12,6 +12,8 @@ builder.Logging.AddDebug();
 // 2. Add Services
 builder.Services.AddControllers();
 builder.Services.AddHttpClient();
+builder.Services.AddSignalR();
+builder.Services.AddScoped<BetBuilder.Application.Interfaces.ISyncNotifier, BetBuilder.Api.Hubs.SyncNotifier>();
 
 // 2. Add Layer Dependencies
 builder.Services.AddInfrastructure(builder.Configuration);
@@ -80,6 +82,7 @@ app.UseDefaultFiles();
 app.UseStaticFiles();
 
 app.MapControllers();
+app.MapHub<BetBuilder.Api.Hubs.SyncHub>("/hubs/sync");
 app.MapFallbackToFile("index.html");
 
 app.Run();

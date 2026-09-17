@@ -80,9 +80,20 @@ const navItems = [
       </div>
     </div>
 
+    <!-- Progress Indicator -->
+    <div
+      v-if="syncStore.syncProgress && !syncStore.lastResult"
+      class="border-t text-xs py-2 px-4 flex items-center justify-between bg-blue-950/80 text-blue-300 border-blue-800"
+    >
+      <div class="max-w-7xl mx-auto w-full flex items-center gap-2">
+        <RefreshCw class="w-3.5 h-3.5 animate-spin" />
+        <span class="font-medium animate-pulse">{{ syncStore.syncProgress }}</span>
+      </div>
+    </div>
+
     <!-- Notification Toast if Sync Message exists -->
     <div
-      v-if="syncStore.lastResult"
+      v-else-if="syncStore.lastResult"
       class="border-t text-xs py-2 px-4 flex items-center justify-between"
       :class="syncStore.lastResult.success ? 'bg-emerald-950/80 text-emerald-300 border-emerald-800' : 'bg-rose-950/80 text-rose-300 border-rose-800'"
     >

@@ -16,8 +16,9 @@ public class DataSyncService : IDataSyncService
 {
     private readonly BetBuilderDbContext _db;
     private readonly HttpClient _http;
-    private readonly IConfiguration _config;
     private readonly ILogger<DataSyncService> _logger;
+    private readonly IConfiguration _config;
+    private readonly ISyncNotifier _notifier;
 
     private static readonly Dictionary<string, string> OddsApiSportKeys = new()
     {
@@ -33,17 +34,20 @@ public class DataSyncService : IDataSyncService
         BetBuilderDbContext db,
         HttpClient http,
         IConfiguration config,
-        ILogger<DataSyncService> logger)
+        ILogger<DataSyncService> logger,
+        ISyncNotifier notifier)
     {
         _db = db;
         _http = http;
         _config = config;
         _logger = logger;
+        _notifier = notifier;
     }
 
     public async Task<SyncResultDto> SyncWeekendResultsAndSettleAsync(CancellationToken ct = default)
     {
         _logger.LogInformation("Starting SyncWeekendResultsAndSettleAsync...");
+        await _notifier.SendProgressAsync("Iniciando liquidação de apostas...", ct);
         int fixturesUpdated = 0;
         int betsSettled = 0;
 
@@ -67,6 +71,8 @@ public class DataSyncService : IDataSyncService
 
         foreach (var league in leagues)
         {
+            await _notifier.SendProgressAsync($"Buscando resultados para {league.Name}...", ct);
+
             if (!OddsApiSportKeys.TryGetValue(league.FdCsvCode!, out var sportKey))
             {
                 continue;
@@ -256,6 +262,7 @@ public class DataSyncService : IDataSyncService
     public async Task<SyncResultDto> SyncLiveOddsAndPredictAsync(CancellationToken ct = default)
     {
         _logger.LogInformation("Starting SyncLiveOddsAndPredictAsync...");
+        await _notifier.SendProgressAsync("Iniciando sincronismo das Odds e cálculo +EV...", ct);
 
         var apiKey = _config["TheOddsApi:ApiKey"]
                      ?? Environment.GetEnvironmentVariable("ODDS_API_KEY")
@@ -293,6 +300,8 @@ public class DataSyncService : IDataSyncService
         // Fetch events for each league from The Odds API
         foreach (var league in leagues)
         {
+            await _notifier.SendProgressAsync($"Buscando odds para {league.Name}...", ct);
+
             if (!OddsApiSportKeys.TryGetValue(league.FdCsvCode!, out var sportKey))
             {
                 continue;
@@ -497,6 +506,8 @@ public class DataSyncService : IDataSyncService
             {
                 continue;
             }
+
+            await _notifier.SendProgressAsync($"Treinando modelo Dixon-Coles para {league.Name}...", ct);
 
             var engine = new DixonColesEngine(decayRate: 0.0065);
             engine.Fit(completedMatches);
