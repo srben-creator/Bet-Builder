@@ -47,6 +47,20 @@ const filteredBets = computed(() => {
            bet.selection.toLowerCase().includes(searchQuery.value.toLowerCase())
   })
 })
+
+const currentPage = ref(1)
+const itemsPerPage = ref(20)
+
+watch([searchQuery, minEdge, selectedLeagueId], () => {
+  currentPage.value = 1
+})
+
+const paginatedBets = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage.value
+  return filteredBets.value.slice(start, start + itemsPerPage.value)
+})
+
+const totalPages = computed(() => Math.ceil(filteredBets.value.length / itemsPerPage.value))
 </script>
 
 <template>
@@ -127,28 +141,28 @@ const filteredBets = computed(() => {
     </div>
 
     <!-- Data Table -->
-    <div v-else class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-      <div class="overflow-x-auto">
-        <table class="w-full text-left text-sm">
-          <thead class="bg-slate-950 text-slate-400 text-xs uppercase font-semibold border-b border-slate-800">
+    <div v-else class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl flex flex-col">
+      <div class="overflow-auto max-h-[600px] relative">
+        <table class="w-full text-left text-sm relative">
+          <thead class="sticky top-0 z-10 bg-slate-950 text-slate-400 text-xs uppercase font-semibold shadow-[0_1px_0_0_#1e293b]">
             <tr>
-              <th class="py-3.5 px-4">Data</th>
-              <th class="py-3.5 px-4">Liga</th>
-              <th class="py-3.5 px-4">Partida</th>
-              <th class="py-3.5 px-4">Mercado</th>
-              <th class="py-3.5 px-4">Seleção</th>
-              <th class="py-3.5 px-4 text-right">Prob %</th>
-              <th class="py-3.5 px-4 text-right">True Odds</th>
-              <th class="py-3.5 px-4 text-right">Pinnacle</th>
-              <th class="py-3.5 px-4">Casa</th>
-              <th class="py-3.5 px-4 text-right">Odd</th>
-              <th class="py-3.5 px-4 text-right font-bold text-emerald-400">Edge (+EV)</th>
-              <th class="py-3.5 px-4 text-right">Stake Kelly</th>
+              <th class="py-3.5 px-4 bg-slate-950">Data</th>
+              <th class="py-3.5 px-4 bg-slate-950">Liga</th>
+              <th class="py-3.5 px-4 bg-slate-950">Partida</th>
+              <th class="py-3.5 px-4 bg-slate-950">Mercado</th>
+              <th class="py-3.5 px-4 bg-slate-950">Seleção</th>
+              <th class="py-3.5 px-4 bg-slate-950 text-right">Prob %</th>
+              <th class="py-3.5 px-4 bg-slate-950 text-right">True Odds</th>
+              <th class="py-3.5 px-4 bg-slate-950 text-right">Pinnacle</th>
+              <th class="py-3.5 px-4 bg-slate-950">Casa</th>
+              <th class="py-3.5 px-4 bg-slate-950 text-right">Odd</th>
+              <th class="py-3.5 px-4 bg-slate-950 text-right font-bold text-emerald-400">Edge (+EV)</th>
+              <th class="py-3.5 px-4 bg-slate-950 text-right">Stake Kelly</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-800/60 font-tabular">
             <tr
-              v-for="bet in filteredBets"
+              v-for="bet in paginatedBets"
               :key="bet.id"
               class="hover:bg-slate-800/40 transition-colors"
             >
@@ -173,6 +187,35 @@ const filteredBets = computed(() => {
             </tr>
           </tbody>
         </table>
+      </div>
+      
+      <!-- Pagination Controls -->
+      <div class="bg-slate-950/50 border-t border-slate-800 p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="text-xs text-slate-400">
+          Mostrando <span class="font-bold text-slate-200">{{ ((currentPage - 1) * itemsPerPage) + 1 }}</span> a 
+          <span class="font-bold text-slate-200">{{ Math.min(currentPage * itemsPerPage, filteredBets.length) }}</span> de 
+          <span class="font-bold text-slate-200">{{ filteredBets.length }}</span> resultados
+        </div>
+        
+        <div class="flex items-center gap-2">
+          <button 
+            @click="currentPage > 1 && currentPage--"
+            :disabled="currentPage === 1"
+            class="px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+          >
+            Anterior
+          </button>
+          <div class="text-xs font-semibold text-slate-400 px-2">
+            Pág {{ currentPage }} / {{ totalPages || 1 }}
+          </div>
+          <button 
+            @click="currentPage < totalPages && currentPage++"
+            :disabled="currentPage >= totalPages"
+            class="px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+          >
+            Próxima
+          </button>
+        </div>
       </div>
     </div>
 
