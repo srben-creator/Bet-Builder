@@ -1,0 +1,15 @@
+services:
+  betbuilder:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: betbuilder_app
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      # Add your Supabase connection string below!
+      # It should look something like: Host=aws-0-eu-central-1.pooler.supabase.com;Port=6543;Database=postgres;Username=postgres.xxx;Password=your_password;SslMode=Require;
+      - ConnectionStrings__DefaultConnection=${DATABASE_URL}
+      - TheOddsApi__ApiKey=${THEODDSAPI_KEY:-98a2558dbfda1e6eed3208455328714d}
