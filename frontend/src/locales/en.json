@@ -4,7 +4,8 @@
     "ladder": "Honest Ladder",
     "fixtures": "Scheduled Matches",
     "performance": "Performance & P&L",
-    "backtest": "Backtest & CLV"
+    "backtest": "Backtest & CLV",
+    "leagues": "Leagues Config"
   },
   "header": {
     "subtitle": "Quantitative Edge",

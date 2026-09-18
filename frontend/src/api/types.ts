@@ -1,3 +1,18 @@
+export interface LeagueDto {
+  id: string
+  name: string
+  country: string
+  code: string
+  fdCsvCode: string | null
+  understatName: string | null
+  isActive: boolean
+}
+
+export interface UpdateLeagueDto {
+  isActive: boolean
+  understatName: string | null
+}
+
 export interface ValueBetDto {
   id: string
   fixtureId: string

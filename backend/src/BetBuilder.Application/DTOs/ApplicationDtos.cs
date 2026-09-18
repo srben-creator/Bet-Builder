@@ -1,6 +1,7 @@
 namespace BetBuilder.Application.DTOs;
 
-public record LeagueDto(Guid Id, string Name);
+public record LeagueDto(Guid Id, string Name, string Country, string Code, string? FdCsvCode, string? UnderstatName, bool IsActive);
+public record UpdateLeagueDto(bool IsActive, string? UnderstatName);
 
 public record ValueBetDto(
     Guid Id,

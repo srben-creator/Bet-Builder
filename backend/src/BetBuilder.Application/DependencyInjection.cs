@@ -14,6 +14,7 @@ public static class DependencyInjection
         services.AddScoped<IPerformanceService, PerformanceService>();
         services.AddScoped<IBacktestService, BacktestService>();
         services.AddScoped<IDataSyncService, DataSyncService>();
+        services.AddScoped<ILeagueService, LeagueService>();
 
         return services;
     }

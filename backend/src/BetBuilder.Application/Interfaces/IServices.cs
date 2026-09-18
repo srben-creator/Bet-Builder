@@ -42,3 +42,11 @@ public interface IDataSyncService
     Task<SyncResultDto> SyncLiveOddsAndPredictAsync(CancellationToken ct = default);
     Task<SyncResultDto> SyncWeekendResultsAndSettleAsync(CancellationToken ct = default);
 }
+
+public interface ILeagueService
+{
+    Task<List<LeagueDto>> GetAllLeaguesAsync(CancellationToken ct = default);
+    Task<LeagueDto> UpdateLeagueAsync(Guid id, UpdateLeagueDto dto, CancellationToken ct = default);
+    Task SeedFootballDataLeaguesAsync(CancellationToken ct = default);
+    Task MergeOldLeaguesAsync(CancellationToken ct = default);
+}

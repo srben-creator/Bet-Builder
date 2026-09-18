@@ -29,6 +29,11 @@ const routes = [
     path: '/backtest',
     name: 'Backtest',
     component: () => import('../views/BacktestView.vue')
+  },
+  {
+    path: '/leagues',
+    name: 'Leagues',
+    component: () => import('../views/LeaguesView.vue')
   }
 ]
 

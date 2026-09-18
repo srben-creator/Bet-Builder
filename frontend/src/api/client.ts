@@ -6,7 +6,9 @@ import type {
   FixtureDto,
   PerformanceDashboardDto,
   BacktestReportDto,
-  SyncResultDto
+  SyncResultDto,
+  LeagueDto,
+  UpdateLeagueDto
 } from './types'
 
 const api = axios.create({
@@ -31,6 +33,21 @@ export const ApiService = {
   async getLeagues(): Promise<{ id: string; name: string }[]> {
     const res = await api.get<{ id: string; name: string }[]>('/value-bets/leagues')
     return res.data
+  },
+
+  // Leagues
+  async getLeaguesManage(): Promise<LeagueDto[]> {
+    const res = await api.get<LeagueDto[]>('/leagues')
+    return res.data
+  },
+
+  async updateLeague(id: string, data: UpdateLeagueDto): Promise<LeagueDto> {
+    const res = await api.put<LeagueDto>(`/leagues/${id}`, data)
+    return res.data
+  },
+
+  async seedLeagues(): Promise<void> {
+    await api.post('/leagues/seed')
   },
 
   // Ladder

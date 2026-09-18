@@ -118,7 +118,7 @@ public class ValueBetsService : IValueBetsService
             .AsNoTracking()
             .Where(l => l.IsActive)
             .OrderBy(l => l.Name)
-            .Select(l => new LeagueDto(l.Id, l.Name))
+            .Select(l => new LeagueDto(l.Id, l.Name, l.Country, l.Code, l.FdCsvCode, l.UnderstatName, l.IsActive))
             .ToListAsync(ct);
     }
 }

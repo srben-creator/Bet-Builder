@@ -6,7 +6,7 @@ import type { ValueBetDto } from '../api/types'
 import Badge from '../components/ui/Badge.vue'
 import { Filter, Search, TrendingUp } from 'lucide-vue-next'
 
-const { t } = useI18n()
+const { locale } = useI18n()
 
 const valueBets = ref<ValueBetDto[]>([])
 const loading = ref(true)
