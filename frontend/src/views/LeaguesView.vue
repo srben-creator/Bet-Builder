@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { ApiService } from '../api/client'
 import type { LeagueDto, UpdateLeagueDto } from '../api/types'
 import { useSyncStore } from '../stores/useSyncStore'
-import { RefreshCw, CheckCircle2 } from 'lucide-vue-next'
+import { RefreshCw, CheckCircle2, ChevronUp, ChevronDown } from 'lucide-vue-next'
 
 const syncStore = useSyncStore()
 
@@ -12,6 +12,8 @@ const loading = ref(false)
 const seeding = ref(false)
 const searchQuery = ref('')
 const statusFilter = ref('all') // 'all', 'active', 'inactive'
+const sortKey = ref<keyof LeagueDto>('country')
+const sortOrder = ref<'asc'|'desc'>('asc')
 
 const fetchLeagues = async () => {
   loading.value = true
@@ -52,8 +54,17 @@ const toggleLeague = async (league: LeagueDto) => {
   }
 }
 
+const sortBy = (key: keyof LeagueDto) => {
+  if (sortKey.value === key) {
+    sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc'
+  } else {
+    sortKey.value = key
+    sortOrder.value = 'asc'
+  }
+}
+
 const filteredLeagues = computed(() => {
-  let result = leagues.value
+  let result = [...leagues.value]
 
   if (statusFilter.value === 'active') {
     result = result.filter(l => l.isActive)
@@ -70,6 +81,23 @@ const filteredLeagues = computed(() => {
         (l.fdCsvCode && l.fdCsvCode.toLowerCase().includes(query))
     )
   }
+
+  result.sort((a, b) => {
+    let valA = a[sortKey.value]
+    let valB = b[sortKey.value]
+    
+    if (valA === null || valA === undefined) valA = ''
+    if (valB === null || valB === undefined) valB = ''
+
+    if (typeof valA === 'string' && typeof valB === 'string') {
+      valA = valA.toLowerCase()
+      valB = valB.toLowerCase()
+    }
+    
+    if (valA < valB) return sortOrder.value === 'asc' ? -1 : 1
+    if (valA > valB) return sortOrder.value === 'asc' ? 1 : -1
+    return 0
+  })
 
   return result
 })
@@ -145,13 +173,79 @@ onMounted(() => {
       <table class="min-w-full divide-y divide-gray-800">
         <thead class="bg-gray-800/50">
           <tr>
-            <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-6">Country</th>
-            <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-white">Name</th>
-            <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-white">System Code</th>
-            <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-white">FD Code</th>
-            <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-white">Understat</th>
-            <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-white">Status</th>
-            <th scope="col" class="px-3 py-3.5 text-right text-sm font-semibold text-white">Actions</th>
+            <th scope="col" @click="sortBy('country')" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-6 cursor-pointer hover:bg-gray-800 transition-colors select-none">
+              <div class="flex items-center gap-1">
+                Country
+                <span v-if="sortKey === 'country'" class="text-indigo-400">
+                  <ChevronUp v-if="sortOrder === 'asc'" class="w-4 h-4" />
+                  <ChevronDown v-else class="w-4 h-4" />
+                </span>
+                <span v-else class="text-gray-600">
+                  <ChevronUp class="w-4 h-4 opacity-50" />
+                </span>
+              </div>
+            </th>
+            <th scope="col" @click="sortBy('name')" class="px-3 py-3.5 text-left text-sm font-semibold text-white cursor-pointer hover:bg-gray-800 transition-colors select-none">
+              <div class="flex items-center gap-1">
+                Name
+                <span v-if="sortKey === 'name'" class="text-indigo-400">
+                  <ChevronUp v-if="sortOrder === 'asc'" class="w-4 h-4" />
+                  <ChevronDown v-else class="w-4 h-4" />
+                </span>
+                <span v-else class="text-gray-600">
+                  <ChevronUp class="w-4 h-4 opacity-50" />
+                </span>
+              </div>
+            </th>
+            <th scope="col" @click="sortBy('code')" class="px-3 py-3.5 text-left text-sm font-semibold text-white cursor-pointer hover:bg-gray-800 transition-colors select-none">
+              <div class="flex items-center gap-1">
+                System Code
+                <span v-if="sortKey === 'code'" class="text-indigo-400">
+                  <ChevronUp v-if="sortOrder === 'asc'" class="w-4 h-4" />
+                  <ChevronDown v-else class="w-4 h-4" />
+                </span>
+                <span v-else class="text-gray-600">
+                  <ChevronUp class="w-4 h-4 opacity-50" />
+                </span>
+              </div>
+            </th>
+            <th scope="col" @click="sortBy('fdCsvCode')" class="px-3 py-3.5 text-left text-sm font-semibold text-white cursor-pointer hover:bg-gray-800 transition-colors select-none">
+              <div class="flex items-center gap-1">
+                FD Code
+                <span v-if="sortKey === 'fdCsvCode'" class="text-indigo-400">
+                  <ChevronUp v-if="sortOrder === 'asc'" class="w-4 h-4" />
+                  <ChevronDown v-else class="w-4 h-4" />
+                </span>
+                <span v-else class="text-gray-600">
+                  <ChevronUp class="w-4 h-4 opacity-50" />
+                </span>
+              </div>
+            </th>
+            <th scope="col" @click="sortBy('understatName')" class="px-3 py-3.5 text-left text-sm font-semibold text-white cursor-pointer hover:bg-gray-800 transition-colors select-none">
+              <div class="flex items-center gap-1">
+                Understat
+                <span v-if="sortKey === 'understatName'" class="text-indigo-400">
+                  <ChevronUp v-if="sortOrder === 'asc'" class="w-4 h-4" />
+                  <ChevronDown v-else class="w-4 h-4" />
+                </span>
+                <span v-else class="text-gray-600">
+                  <ChevronUp class="w-4 h-4 opacity-50" />
+                </span>
+              </div>
+            </th>
+            <th scope="col" @click="sortBy('isActive')" class="px-3 py-3.5 text-left text-sm font-semibold text-white cursor-pointer hover:bg-gray-800 transition-colors select-none">
+              <div class="flex items-center gap-1">
+                Status
+                <span v-if="sortKey === 'isActive'" class="text-indigo-400">
+                  <ChevronUp v-if="sortOrder === 'asc'" class="w-4 h-4" />
+                  <ChevronDown v-else class="w-4 h-4" />
+                </span>
+                <span v-else class="text-gray-600">
+                  <ChevronUp class="w-4 h-4 opacity-50" />
+                </span>
+              </div>
+            </th>
+            <th scope="col" class="px-3 py-3.5 text-right text-sm font-semibold text-white select-none">Actions</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-800 bg-gray-900">
