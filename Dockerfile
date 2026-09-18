@@ -12,8 +12,7 @@ RUN npm run build
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build-backend
 WORKDIR /src
 
-# Copy solution and project files
-COPY backend/BetBuilder.sln ./backend/
+# Copy project files
 COPY backend/src/BetBuilder.Api/BetBuilder.Api.csproj ./backend/src/BetBuilder.Api/
 COPY backend/src/BetBuilder.Application/BetBuilder.Application.csproj ./backend/src/BetBuilder.Application/
 COPY backend/src/BetBuilder.Domain/BetBuilder.Domain.csproj ./backend/src/BetBuilder.Domain/
@@ -21,7 +20,7 @@ COPY backend/src/BetBuilder.Infrastructure/BetBuilder.Infrastructure.csproj ./ba
 COPY backend/src/BetBuilder.MathEngine/BetBuilder.MathEngine.csproj ./backend/src/BetBuilder.MathEngine/
 
 # Restore dependencies
-RUN dotnet restore backend/BetBuilder.sln
+RUN dotnet restore backend/src/BetBuilder.Api/BetBuilder.Api.csproj
 
 # Copy the rest of the backend source code
 COPY backend/ ./backend/
