@@ -47,6 +47,8 @@ export interface LadderSafeLegDto {
   market: string
   selection: string
   prob: number
+  fairOdds?: number
+  pinnacleOdds?: number
 }
 
 export interface FixtureDto {

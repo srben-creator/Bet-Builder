@@ -25,6 +25,15 @@ export const useLadderStore = defineStore('ladder', () => {
     return Number((1.0 / combinedProb.value).toFixed(2))
   })
 
+  const pinnacleCalculado = computed(() => {
+    if (slip.value.length === 0) return 0
+    const product = slip.value.reduce((acc, leg) => {
+      const odd = leg.pinnacleOdds && leg.pinnacleOdds > 1.0 ? leg.pinnacleOdds : (1.0 / leg.prob)
+      return acc * odd
+    }, 1.0)
+    return Number(product.toFixed(2))
+  })
+
   const edgeEv = computed(() => {
     if (combinedProb.value <= 0 || customOdds.value <= 1.0) return 0
     return ((combinedProb.value * customOdds.value) - 1.0) * 100.0
@@ -44,7 +53,9 @@ export const useLadderStore = defineStore('ladder', () => {
     const exists = slip.value.some(l => l.fixtureId === leg.fixtureId && l.market === leg.market)
     if (!exists) {
       slip.value.push(leg)
-      if (fairOdds.value > 1.0) {
+      if (pinnacleCalculado.value > 1.0) {
+        customOdds.value = pinnacleCalculado.value
+      } else if (fairOdds.value > 1.0) {
         customOdds.value = Number(fairOdds.value.toFixed(2))
       }
     }
@@ -52,8 +63,12 @@ export const useLadderStore = defineStore('ladder', () => {
 
   function removeLeg(index: number) {
     slip.value.splice(index, 1)
-    if (slip.value.length > 0 && fairOdds.value > 1.0) {
-      customOdds.value = Number(fairOdds.value.toFixed(2))
+    if (slip.value.length > 0) {
+      if (pinnacleCalculado.value > 1.0) {
+        customOdds.value = pinnacleCalculado.value
+      } else if (fairOdds.value > 1.0) {
+        customOdds.value = Number(fairOdds.value.toFixed(2))
+      }
     }
   }
 
@@ -101,6 +116,7 @@ export const useLadderStore = defineStore('ladder', () => {
     hasCorrelation,
     combinedProb,
     fairOdds,
+    pinnacleCalculado,
     edgeEv,
     loadChallenge,
     addLeg,

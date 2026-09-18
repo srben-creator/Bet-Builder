@@ -79,6 +79,8 @@
     "noLegs": "Nenhuma seleção de alta probabilidade disponível no momento.",
     "noLegsTip": "Execute o sincronismo de odds pelo botão \"Sync Odds\" no cabeçalho.",
     "prob": "prob",
+    "fair": "Justa",
+    "fairOddsTitle": "Odd Justa Teórica (1 / Probabilidade)",
     "add": "Adicionar",
     "added": "Adicionado"
   },
@@ -92,6 +94,8 @@
     "probOf": "de probabilidade",
     "combinedProb": "Probabilidade Combinada:",
     "fairOdds": "Odd Justa (Sem Margem):",
+    "pinnacleCalculated": "Pinnacle Calculado:",
+    "pinnacleMarket": "Pinnacle:",
     "bookmakerOdds": "Cotacao da Casa (Odd Acumulada):",
     "evPositive": "✅ Aposta com +EV! Vantagem: {edge}%",
     "evNegative": "❌ Aposta com -EV. Perda esperada: {edge}%",

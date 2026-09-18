@@ -368,3 +368,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Secrets & Local Configurations
+secret.json
+secrets.json
+appsettings*.local.json
+

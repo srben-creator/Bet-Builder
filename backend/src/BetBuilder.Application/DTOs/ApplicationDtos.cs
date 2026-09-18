@@ -36,7 +36,9 @@ public record LadderSafeLegDto(
     string Match,
     string Market,
     string Selection,
-    double Prob
+    double Prob,
+    double FairOdds = 0,
+    double? PinnacleOdds = null
 );
 
 public record FixtureDto(

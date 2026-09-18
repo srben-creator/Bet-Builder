@@ -79,6 +79,8 @@
     "noLegs": "No high probability selections available right now.",
     "noLegsTip": "Run odds sync using the \"Sync Odds\" button in the header.",
     "prob": "prob",
+    "fair": "Fair",
+    "fairOddsTitle": "Theoretical Fair Odds (1 / Probability)",
     "add": "Add",
     "added": "Added"
   },
@@ -92,6 +94,8 @@
     "probOf": "probability",
     "combinedProb": "Combined Probability:",
     "fairOdds": "Fair Odds (No Margin):",
+    "pinnacleCalculated": "Pinnacle Calculado:",
+    "pinnacleMarket": "Pinnacle:",
     "bookmakerOdds": "Bookmaker Odds (Accumulator):",
     "evPositive": "✅ +EV Bet! Edge: {edge}%",
     "evNegative": "❌ -EV Bet. Expected loss: {edge}%",

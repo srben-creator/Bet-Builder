@@ -2,7 +2,8 @@
 import { useI18n } from 'vue-i18n'
 import { useLadderStore } from '../../stores/useLadderStore'
 import Badge from '../ui/Badge.vue'
-import { AlertTriangle, Trash2, Trophy, XCircle } from 'lucide-vue-next'
+import PinnacleIcon from '../ui/PinnacleIcon.vue'
+import { AlertTriangle, Scale, Trash2, Trophy, XCircle } from 'lucide-vue-next'
 
 const { t } = useI18n()
 const ladderStore = useLadderStore()
@@ -46,14 +47,33 @@ const ladderStore = useLadderStore()
         :key="`${leg.fixtureId}_${leg.market}`"
         class="py-3 flex items-start justify-between gap-2 text-sm"
       >
-        <div>
-          <div class="font-medium text-slate-200">{{ leg.match }}</div>
-          <div class="text-xs text-emerald-400 font-semibold">{{ leg.market }}</div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="font-medium text-slate-200 truncate">{{ leg.match }}</span>
+            <!-- Odd Justa da Perna -->
+            <span
+              class="shrink-0 px-1.5 py-0.5 text-xs font-bold bg-sky-500/15 text-sky-300 border border-sky-500/30 rounded font-tabular inline-flex items-center gap-1 shadow-sm"
+              :title="t('ladder.fairOddsTitle')"
+            >
+              <Scale class="w-3.5 h-3.5 text-sky-400" />
+              <span>{{ t('ladder.fair') }} {{ (leg.fairOdds || (1.0 / leg.prob)).toFixed(2) }}</span>
+            </span>
+            <!-- Odd do Mercado Pinnacle (Assinalado a Vermelho) -->
+            <span
+              v-if="leg.pinnacleOdds"
+              class="shrink-0 px-1.5 py-0.5 text-xs font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30 rounded font-tabular inline-flex items-center gap-1 shadow-sm"
+              title="Odd do Mercado Pinnacle"
+            >
+              <PinnacleIcon class="w-3.5 h-3.5" />
+              <span>{{ leg.pinnacleOdds.toFixed(2) }}</span>
+            </span>
+          </div>
+          <div class="text-xs text-emerald-400 font-semibold mt-0.5">{{ leg.market }}</div>
           <div class="text-xs text-slate-500">{{ (leg.prob * 100).toFixed(1) }}% {{ t('slipDrawer.probOf') }}</div>
         </div>
         <button
           @click="ladderStore.removeLeg(idx)"
-          class="text-slate-500 hover:text-rose-400 p-1 transition-colors"
+          class="text-slate-500 hover:text-rose-400 p-1 transition-colors shrink-0"
           title="Remover seleção"
         >
           <Trash2 class="w-4 h-4" />
@@ -71,6 +91,17 @@ const ladderStore = useLadderStore()
       <div class="flex justify-between text-xs text-slate-400">
         <span>{{ t('slipDrawer.fairOdds') }}</span>
         <span class="font-bold text-slate-200 font-tabular">{{ ladderStore.fairOdds.toFixed(2) }}</span>
+      </div>
+
+      <!-- Pinnacle Calculado (Assinalado a Azul) -->
+      <div class="flex justify-between text-xs items-center bg-slate-950/60 px-2.5 py-1.5 rounded-lg border border-slate-800">
+        <span class="flex items-center gap-1.5 font-semibold text-amber-300">
+          <PinnacleIcon class="w-4 h-4" />
+          <span>{{ t('slipDrawer.pinnacleCalculated') }}</span>
+        </span>
+        <span class="font-bold text-amber-400 font-tabular text-sm">
+          {{ ladderStore.pinnacleCalculado.toFixed(2) }}
+        </span>
       </div>
 
       <div>

@@ -4,6 +4,11 @@ using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Load secret.json if present
+builder.Configuration
+    .AddJsonFile("secret.json", optional: true, reloadOnChange: true)
+    .AddJsonFile(Path.Combine(AppContext.BaseDirectory, "secret.json"), optional: true, reloadOnChange: true);
+
 // 1. Configure Logging (Remove Windows EventLog to prevent AggregateException on Windows)
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();

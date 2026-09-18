@@ -60,6 +60,33 @@ public class LadderService : ILadderService
             .Where(p => p.Fixture.Status == "scheduled" && p.Fixture.MatchDate >= today)
             .ToListAsync(ct);
 
+        var fixtureIds = predictions.Select(p => p.FixtureId).Distinct().ToList();
+
+        // Fetch all Pinnacle odds for these fixtures
+        var pinnacleOdds = await _db.Odds
+            .AsNoTracking()
+            .Where(o => fixtureIds.Contains(o.FixtureId) && o.Bookmaker.Code.ToLower() == "pinnacle")
+            .OrderBy(o => o.CapturedAt)
+            .Select(o => new { o.FixtureId, o.Market, o.Selection, o.Price })
+            .ToListAsync(ct);
+
+        var directPinMap = pinnacleOdds
+            .GroupBy(o => (o.FixtureId, o.Market, o.Selection))
+            .ToDictionary(g => g.Key, g => g.Last().Price);
+
+        var pin1X2Map = pinnacleOdds
+            .Where(o => o.Market == "1X2")
+            .GroupBy(o => o.FixtureId)
+            .ToDictionary(
+                g => g.Key,
+                g => new
+                {
+                    Home = g.FirstOrDefault(x => x.Selection == "H")?.Price,
+                    Draw = g.FirstOrDefault(x => x.Selection == "D")?.Price,
+                    Away = g.FirstOrDefault(x => x.Selection == "A")?.Price
+                }
+            );
+
         var safeLegs = new List<LadderSafeLegDto>();
 
         foreach (var p in predictions)
@@ -73,37 +100,83 @@ public class LadderService : ILadderService
 
             if (p.Over15Prob.HasValue && (double)p.Over15Prob.Value > 0.75)
             {
+                double pinOdd = 0;
+                if (directPinMap.TryGetValue((fix.Id, "OU15", "Over"), out var directPrice) && directPrice > 1.0m)
+                {
+                    pinOdd = (double)directPrice;
+                }
+                else if (p.Over15Prob.Value > 0)
+                {
+                    pinOdd = Math.Round(1.0 / ((double)p.Over15Prob.Value * 1.025), 2);
+                }
+
                 safeLegs.Add(new LadderSafeLegDto(
                     Date: dateStr,
                     FixtureId: fix.Id,
                     Match: match,
                     Market: "Over 1.5 Goals",
                     Selection: "Over",
-                    Prob: (double)p.Over15Prob.Value
+                    Prob: (double)p.Over15Prob.Value,
+                    FairOdds: Math.Round(1.0 / (double)p.Over15Prob.Value, 2),
+                    PinnacleOdds: pinOdd > 1.0 ? pinOdd : null
                 ));
             }
 
             if (p.Dc1XProb.HasValue && (double)p.Dc1XProb.Value > 0.80)
             {
+                double pinOdd = 0;
+                if (directPinMap.TryGetValue((fix.Id, "DC", "1X"), out var directPrice) && directPrice > 1.0m)
+                {
+                    pinOdd = (double)directPrice;
+                }
+                else if (pin1X2Map.TryGetValue(fix.Id, out var h2h) && h2h.Home > 1.0m && h2h.Draw > 1.0m)
+                {
+                    var dcPrice = 1.0m / ((1.0m / h2h.Home.Value) + (1.0m / h2h.Draw.Value));
+                    pinOdd = (double)Math.Round(dcPrice, 2);
+                }
+                else if (p.Dc1XProb.Value > 0)
+                {
+                    pinOdd = Math.Round(1.0 / ((double)p.Dc1XProb.Value * 1.025), 2);
+                }
+
                 safeLegs.Add(new LadderSafeLegDto(
                     Date: dateStr,
                     FixtureId: fix.Id,
                     Match: match,
                     Market: "1X (Home or Draw)",
                     Selection: "1X",
-                    Prob: (double)p.Dc1XProb.Value
+                    Prob: (double)p.Dc1XProb.Value,
+                    FairOdds: Math.Round(1.0 / (double)p.Dc1XProb.Value, 2),
+                    PinnacleOdds: pinOdd > 1.0 ? pinOdd : null
                 ));
             }
 
             if (p.DcX2Prob.HasValue && (double)p.DcX2Prob.Value > 0.80)
             {
+                double pinOdd = 0;
+                if (directPinMap.TryGetValue((fix.Id, "DC", "X2"), out var directPrice) && directPrice > 1.0m)
+                {
+                    pinOdd = (double)directPrice;
+                }
+                else if (pin1X2Map.TryGetValue(fix.Id, out var h2h) && h2h.Away > 1.0m && h2h.Draw > 1.0m)
+                {
+                    var dcPrice = 1.0m / ((1.0m / h2h.Draw.Value) + (1.0m / h2h.Away.Value));
+                    pinOdd = (double)Math.Round(dcPrice, 2);
+                }
+                else if (p.DcX2Prob.Value > 0)
+                {
+                    pinOdd = Math.Round(1.0 / ((double)p.DcX2Prob.Value * 1.025), 2);
+                }
+
                 safeLegs.Add(new LadderSafeLegDto(
                     Date: dateStr,
                     FixtureId: fix.Id,
                     Match: match,
                     Market: "X2 (Away or Draw)",
                     Selection: "X2",
-                    Prob: (double)p.DcX2Prob.Value
+                    Prob: (double)p.DcX2Prob.Value,
+                    FairOdds: Math.Round(1.0 / (double)p.DcX2Prob.Value, 2),
+                    PinnacleOdds: pinOdd > 1.0 ? pinOdd : null
                 ));
             }
         }
@@ -154,7 +227,7 @@ public class LadderService : ILadderService
 
         if (active != null)
         {
-            active.Status = "busted";
+            active.Status = "failed";
             active.CompletedAt = DateTime.UtcNow;
             await _db.SaveChangesAsync(ct);
         }

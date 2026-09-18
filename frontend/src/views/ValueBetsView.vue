@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n'
 import { ApiService } from '../api/client'
 import type { ValueBetDto } from '../api/types'
 import Badge from '../components/ui/Badge.vue'
+import PinnacleIcon from '../components/ui/PinnacleIcon.vue'
 import { Filter, Search, TrendingUp } from 'lucide-vue-next'
 
 const { locale } = useI18n()
@@ -144,49 +145,54 @@ const totalPages = computed(() => Math.ceil(filteredBets.value.length / itemsPer
     </div>
 
     <!-- Data Table -->
-    <div v-else class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl flex flex-col">
-      <div class="overflow-auto max-h-[calc(100vh-300px)] relative">
+    <div v-else class="bg-slate-900/90 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl flex flex-col backdrop-blur-sm">
+      <div class="overflow-auto max-h-[620px] custom-scroll relative">
         <table class="w-full text-left text-sm relative">
-          <thead class="sticky top-0 z-10 bg-slate-950 text-slate-400 text-xs uppercase font-semibold shadow-[0_1px_0_0_#1e293b]">
+          <thead class="sticky top-0 z-20 bg-slate-950/95 backdrop-blur-md text-slate-400 text-xs uppercase font-semibold border-b border-slate-800 shadow-[0_4px_12px_rgba(0,0,0,0.45)]">
             <tr>
-              <th class="py-3.5 px-4 bg-slate-950">{{ $t('valueBets.table.date') }}</th>
-              <th class="py-3.5 px-4 bg-slate-950">{{ $t('valueBets.table.league') }}</th>
-              <th class="py-3.5 px-4 bg-slate-950">{{ $t('valueBets.table.match') }}</th>
-              <th class="py-3.5 px-4 bg-slate-950">{{ $t('valueBets.table.market') }}</th>
-              <th class="py-3.5 px-4 bg-slate-950">{{ $t('valueBets.table.selection') }}</th>
-              <th class="py-3.5 px-4 bg-slate-950 text-right">{{ $t('valueBets.table.probPercent') }}</th>
-              <th class="py-3.5 px-4 bg-slate-950 text-right">{{ $t('valueBets.table.trueOdds') }}</th>
-              <th class="py-3.5 px-4 bg-slate-950 text-right">{{ $t('valueBets.table.pinnacle') }}</th>
-              <th class="py-3.5 px-4 bg-slate-950">{{ $t('valueBets.table.bookmaker') }}</th>
-              <th class="py-3.5 px-4 bg-slate-950 text-right">{{ $t('valueBets.table.odd') }}</th>
-              <th class="py-3.5 px-4 bg-slate-950 text-right font-bold text-emerald-400">{{ $t('valueBets.table.edge') }}</th>
-              <th class="py-3.5 px-4 bg-slate-950 text-right">{{ $t('valueBets.table.stakeKelly') }}</th>
+              <th class="py-3.5 px-3 whitespace-nowrap bg-slate-950/95">{{ $t('valueBets.table.date') }}</th>
+              <th class="py-3.5 px-3 whitespace-nowrap bg-slate-950/95">{{ $t('valueBets.table.league') }}</th>
+              <th class="py-3.5 px-3 whitespace-nowrap bg-slate-950/95">{{ $t('valueBets.table.match') }}</th>
+              <th class="py-3.5 px-2.5 whitespace-nowrap bg-slate-950/95">{{ $t('valueBets.table.market') }}</th>
+              <th class="py-3.5 px-3 whitespace-nowrap bg-slate-950/95">{{ $t('valueBets.table.selection') }}</th>
+              <th class="py-3.5 px-2.5 text-right whitespace-nowrap bg-slate-950/95">{{ $t('valueBets.table.probPercent') }}</th>
+              <th class="py-3.5 px-2.5 text-right whitespace-nowrap bg-slate-950/95">{{ $t('valueBets.table.trueOdds') }}</th>
+              <th class="py-3.5 px-2.5 text-right whitespace-nowrap bg-slate-950/95">
+                <span class="inline-flex items-center gap-1.5 justify-end">
+                  <PinnacleIcon class="w-3.5 h-3.5" />
+                  <span>{{ $t('valueBets.table.pinnacle') }}</span>
+                </span>
+              </th>
+              <th class="py-3.5 px-2.5 whitespace-nowrap bg-slate-950/95">{{ $t('valueBets.table.bookmaker') }}</th>
+              <th class="py-3.5 px-3 text-right whitespace-nowrap bg-slate-950/95">{{ $t('valueBets.table.odd') }}</th>
+              <th class="py-3.5 px-3 text-right font-bold text-emerald-400 whitespace-nowrap bg-slate-950/95">{{ $t('valueBets.table.edge') }}</th>
+              <th class="py-3.5 px-3 text-right whitespace-nowrap bg-slate-950/95">{{ $t('valueBets.table.stakeKelly') }}</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-800/60 font-tabular">
             <tr
               v-for="bet in paginatedBets"
               :key="bet.id"
-              class="hover:bg-slate-800/40 transition-colors"
+              class="hover:bg-slate-800/50 transition-colors duration-150"
             >
-              <td class="py-3 px-4 text-slate-300 text-xs whitespace-nowrap">{{ bet.date }}</td>
-              <td class="py-3 px-4 text-slate-400 text-xs whitespace-nowrap">{{ bet.league }}</td>
-              <td class="py-3 px-4 font-medium text-slate-100 whitespace-nowrap">{{ bet.match }}</td>
-              <td class="py-3 px-4 text-slate-300">
-                <span class="px-2 py-0.5 bg-slate-800 rounded text-xs">{{ bet.market }}</span>
+              <td class="py-3 px-3 text-slate-300 text-xs whitespace-nowrap">{{ bet.date }}</td>
+              <td class="py-3 px-3 text-slate-400 text-xs whitespace-nowrap">{{ bet.league }}</td>
+              <td class="py-3 px-3 font-medium text-slate-100 whitespace-nowrap">{{ bet.match }}</td>
+              <td class="py-3 px-2.5 text-slate-300 whitespace-nowrap">
+                <span class="px-2 py-0.5 bg-slate-800/80 rounded text-xs border border-slate-700/50">{{ bet.market }}</span>
               </td>
-              <td class="py-3 px-4 font-semibold text-emerald-300">{{ bet.selection }}</td>
-              <td class="py-3 px-4 text-right text-slate-300">{{ bet.probPercent }}</td>
-              <td class="py-3 px-4 text-right text-slate-400">{{ bet.trueOdds }}</td>
-              <td class="py-3 px-4 text-right text-slate-400 font-medium">{{ bet.pinnacle }}</td>
-              <td class="py-3 px-4 text-slate-300 text-xs">{{ bet.bookmaker }}</td>
-              <td class="py-3 px-4 text-right font-bold text-white">{{ bet.odds.toFixed(2) }}</td>
-              <td class="py-3 px-4 text-right">
-                <span class="font-bold text-emerald-400 bg-emerald-950/70 px-2 py-0.5 rounded border border-emerald-800/60">
+              <td class="py-3 px-3 font-semibold text-emerald-300 whitespace-nowrap">{{ bet.selection }}</td>
+              <td class="py-3 px-2.5 text-right text-slate-300 whitespace-nowrap">{{ bet.probPercent }}</td>
+              <td class="py-3 px-2.5 text-right text-slate-400 whitespace-nowrap">{{ bet.trueOdds }}</td>
+              <td class="py-3 px-2.5 text-right text-slate-400 font-medium whitespace-nowrap">{{ bet.pinnacle }}</td>
+              <td class="py-3 px-2.5 text-slate-300 text-xs whitespace-nowrap">{{ bet.bookmaker }}</td>
+              <td class="py-3 px-3 text-right font-bold text-white whitespace-nowrap">{{ bet.odds.toFixed(2) }}</td>
+              <td class="py-3 px-3 text-right whitespace-nowrap">
+                <span class="font-bold text-emerald-400 bg-emerald-950/70 px-2 py-0.5 rounded border border-emerald-800/60 shadow-xs">
                   +{{ bet.edgeEv.toFixed(2) }}%
                 </span>
               </td>
-              <td class="py-3 px-4 text-right text-slate-300">{{ bet.qKellyStake }}</td>
+              <td class="py-3 px-3 text-right text-slate-300 whitespace-nowrap">{{ bet.qKellyStake }}</td>
             </tr>
           </tbody>
         </table>
