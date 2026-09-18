@@ -3,8 +3,8 @@ import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useSyncStore } from '../../stores/useSyncStore'
-import { useSettingsStore, type Theme } from '../../stores/useSettingsStore'
-import { RefreshCw, CheckCircle2, ExternalLink, Globe, Settings, Moon, Sun, Palette, Monitor } from 'lucide-vue-next'
+import { useSettingsStore } from '../../stores/useSettingsStore'
+import { RefreshCw, CheckCircle2, ExternalLink, Settings, Moon, Sun, Palette, Monitor } from 'lucide-vue-next'
 
 const route = useRoute()
 const syncStore = useSyncStore()
@@ -16,7 +16,8 @@ const navItems = computed(() => [
   { name: t('nav.ladder'), path: '/ladder', icon: '🪜' },
   { name: t('nav.fixtures'), path: '/fixtures', icon: '📅' },
   { name: t('nav.performance'), path: '/performance', icon: '📈' },
-  { name: t('nav.backtest'), path: '/backtest', icon: '🔬' }
+  { name: t('nav.backtest'), path: '/backtest', icon: '🔬' },
+  { name: t('nav.leagues') || 'Leagues', path: '/leagues', icon: '🌍' }
 ])
 
 const showSettings = ref(false)
@@ -43,6 +44,7 @@ onUnmounted(() => {
 
 const setLanguage = (lang: string) => {
   locale.value = lang
+  settingsStore.setLocale(lang)
 }
 </script>
 
@@ -144,26 +146,6 @@ const setLanguage = (lang: string) => {
               </div>
             </div>
           </div>
-
-          <!-- Sync Live Odds -->
-          <button
-            @click="syncStore.syncOdds"
-            :disabled="syncStore.syncingOdds"
-            class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg border border-slate-700 flex items-center gap-1.5 transition-all disabled:opacity-50 cursor-pointer"
-          >
-            <RefreshCw class="w-3.5 h-3.5" :class="{ 'animate-spin': syncStore.syncingOdds }" />
-            <span>{{ syncStore.syncingOdds ? t('header.syncing') : t('header.syncOdds') }}</span>
-          </button>
-
-          <!-- Settle Bets -->
-          <button
-            @click="syncStore.syncResults"
-            :disabled="syncStore.syncingResults"
-            class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg border border-slate-700 flex items-center gap-1.5 transition-all disabled:opacity-50 cursor-pointer"
-          >
-            <CheckCircle2 class="w-3.5 h-3.5 text-emerald-400" :class="{ 'animate-spin': syncStore.syncingResults }" />
-            <span>{{ syncStore.syncingResults ? t('header.settling') : t('header.settle') }}</span>
-          </button>
 
           <!-- Swagger Link -->
           <a

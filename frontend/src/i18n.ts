@@ -7,7 +7,7 @@ type MessageSchema = typeof ptPT
 
 export const i18n = createI18n<[MessageSchema], 'pt-PT' | 'en'>({
   legacy: false, // you must set `false`, to use Composition API
-  locale: 'pt-PT', // set locale
+  locale: localStorage.getItem('betbuilder_locale') || 'pt-PT', // set locale
   fallbackLocale: 'en', // set fallback locale
   messages: {
     'pt-PT': ptPT,
